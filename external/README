@@ -1,0 +1,3 @@
+you need pyopencl here in the external directory, available from here:
+
+git clone http://git.tiker.net/trees/pyopencl.git
