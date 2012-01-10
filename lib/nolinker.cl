@@ -111,8 +111,7 @@ __kernel void my_test_kernel(
 	__global uint *hist,
 	__global uint *hist6
 ){
-	if(nlkh < 9 || nlkh < 9) return;
-	__local struct VEC lkh[nlkh],lkp[nlkp],psi_et,hyd_et,pet_et,hyd_cen,pet_cen;
+	__local struct VEC psi_et,hyd_et,pet_et,hyd_cen,pet_cen;
 	__local struct XFORM xh,xp,xhr,move;
 	__local bool p_or_h,mc_fail;
 	__local float mc_rand,minz[LS],boltz,score,last_score;
@@ -122,32 +121,16 @@ __kernel void my_test_kernel(
 	ONLY1 samp_delay= status_global[2*GI+1];
 	
 	if(status) { // continuing
-		for(size_t i=0; i<nlkh; i+=LS) if((i+LI)<nlkh) lkh[i+LI] = out[GI*ntot     +i+LI];
-		for(size_t i=0; i<nlkp; i+=LS) if((i+LI)<nlkp) lkp[i+LI] = out[GI*ntot+nlkh+i+LI];
 		ONLY1 {
 			xh = xout[3*GI+0];
 		    xp = xout[3*GI+1];
 		}
 	} else { // initialize
-		for(size_t i = 0; i < nlkh; i+=LS) if((i+LI)<nlkh) lkh[i+LI]=init_lkh[i+LI];
-		for(size_t i = 0; i < nlkp; i+=LS) if((i+LI)<nlkp) lkp[i+LI]=init_lkp[i+LI];
 		ONLY1 { 
 			myrand_init(GI+*python_seed,ranluxcltab);
-		    xh = multxx( stub(lkh[nlkh-3],lkh[nlkh-2],lkh[nlkh-1]) , hyd_stub );
-		    xp = multxx( stub(lkp[nlkp-3],lkp[nlkp-2],lkp[nlkp-1]) , pet_stub ); 
+			xh = multxx( stub(init_lkh[90],init_lkh[91],init_lkh[92]) , hyd_stub ); 			    
+			xp = multxx( stub(init_lkp[90],init_lkp[91],init_lkp[92]) , pet_stub );			
 			samp_delay = 0; // < 0 -> OK >= 0 not "equilibrated" yet
-			// hist6[12*GI+ 0] =  9999;
-			// hist6[12*GI+ 1] = -9999;
-			// hist6[12*GI+ 2] =  9999;
-			// hist6[12*GI+ 3] = -9999;
-			// hist6[12*GI+ 4] =  9999;
-			// hist6[12*GI+ 5] = -9999;					
-			// hist6[12*GI+ 6] =  9999;
-			// hist6[12*GI+ 7] = -9999;					
-			// hist6[12*GI+ 8] =  9999;
-			// hist6[12*GI+ 9] = -9999;					
-			// hist6[12*GI+10] =  9999;
-			// hist6[12*GI+11] = -9999;					
 		}
 	}
     barrier(CLK_LOCAL_MEM_FENCE);
@@ -164,15 +147,16 @@ __kernel void my_test_kernel(
 			p_or_h = rand.x < 0.5; 
 			mc_rand = rand.x*2.0; // discard used 2
 			if(mc_rand > 1.0) mc_rand -= 1.0;
-			residx = (uint)(rand.y*(float)(p_or_h?nlkp/3:nlkh/3)-2.0) + 1;
-			bool phipsi = rand.z < 0.5;
-			float ang = (2.0*rand.w-1.0) * ((status > 0) ? 0.1 : 3.14159); // big move if not sampling
-			idx = 3*residx + (phipsi?0:1);
-			nlnk = p_or_h?nlkp:nlkh; 
-			struct VEC cen = (p_or_h?lkp:lkh)[idx];
-			struct VEC axs = subvv( (p_or_h?lkp:lkh)[idx+1], (p_or_h?lkp:lkh)[idx] );
-			struct MAT R = rotation_matrix( axs, ang );
-			move = xform( R, subvv(cen,multmv(R,cen)) );
+			float4 randr = myrand(ranluxcltab);
+			float4 randc = myrand(ranluxcltab);
+			struct VEC trn = vec((randc.x-0.5)/1.0,(randc.y-0.5)/1.0,(randc.z-0.5)/1.0);
+			struct VEC axs = vec(randr.x,randr.y,randr.z );
+			pet_cen = multxv(xp,vec(12.6810557 ,15.45869573,14.22168096));
+			hyd_cen = multxv(xh,vec(21.09134627,36.96850701,23.76050228));
+			struct VEC cen = (p_or_h) ? pet_cen : hyd_cen;
+			struct MAT R = rotation_matrix( axs, (randr.w-0.5)/1.0 );
+			move = xform( R, addvv( subvv(cen,multmv(R,cen)) , trn ) );
+//			move = xform( R,        subvv(cen,multmv(R,cen))         );			
 			if(p_or_h) { xp = multxx(move,xp); } else { xh = multxx(move,xh); xhr = xrev(xh); }
 			pet_et  = multxv(xp,vec( 5.468269  ,20.041713  ,11.962524  ));
 			pet_cen = multxv(xp,vec(12.6810557 ,15.45869573,14.22168096));
@@ -194,130 +178,33 @@ __kernel void my_test_kernel(
 			continue;
 		}
 
-		for(int i = idx+2; i < nlnk; i+=LS) { // xform linker coords 
-			if(LI+i < nlnk) (p_or_h?lkp:lkh)[LI+i] = multxv(move,(p_or_h?lkp:lkh)[LI+i]);
-		}
-
 		{ // clash check 
 			int rclash = false;			
 			minz[LI] = 9e9f;
 			if(p_or_h) {
-			    ONLY1 xp = multxx( stub(lkp[nlkp-3],lkp[nlkp-2],lkp[nlkp-1]) , pet_stub ); 			    
-				for(size_t i = 0; i < nlkp; i+=LS) if(i+LI < nlkp && lkp[i+LI].z < -3.0) rclash = true;
 				for(size_t i = 0; i < npet; i+=LS) minz[LI] = min( minz[LI], (i+LI<npet) ? multxv(xp,pet[i+LI]).z : 9e9f );
 				for(uint c=LS/2;c>0;c/=2) { barrier(CLK_LOCAL_MEM_FENCE); if(c>LI) minz[LI] = min(minz[LI],minz[LI+c]); }
 				barrier(CLK_LOCAL_MEM_FENCE);
 			  	if(minz[0] < -3.0) { ONLY1 clash=true; goto DONE_CLASH_CHECK; }
 			
-				for(size_t ip = 0; ip < nlkp; ip+=LS) {
-					if(ip+LI >= nlkp) break;
-					struct VEC const vp = lkp[ip+LI];
-					for(size_t ih  =        0; ih < nlkh-5; ih+=5) {
-						rclash |= ( dist2v(vp,lkh[ih+0]) < 16.0 );
-						rclash |= ( dist2v(vp,lkh[ih+1]) < 16.0 );
-						rclash |= ( dist2v(vp,lkh[ih+2]) < 16.0 );
-						rclash |= ( dist2v(vp,lkh[ih+3]) < 16.0 );
-						rclash |= ( dist2v(vp,lkh[ih+4]) < 16.0 );
-					}
-					for(size_t ip2 = ip+LI+4; ip2 < nlkp-5; ip2+=5) {
-						rclash |= ( dist2v(vp,lkp[ip2+0]) < 16.0 );
-						rclash |= ( dist2v(vp,lkp[ip2+1]) < 16.0 );
-						rclash |= ( dist2v(vp,lkp[ip2+2]) < 16.0 );
-						rclash |= ( dist2v(vp,lkp[ip2+3]) < 16.0 );
-						rclash |= ( dist2v(vp,lkp[ip2+4]) < 16.0 );
-					}
-				}
-				if(rclash) clash=true; if(clash) goto DONE_CLASH_CHECK;
-				// linkp vs psi
-				for(size_t ilp = 6; ilp < nlkp; ilp+=LS) {       // skip start of linkp vs. psi
-					rclash |= clash_check_psi( (ilp+LI<nlkp) ? lkp[ilp+LI] : vec(9e9,9e9,9e9) ,psi,psigrid);
-				}		
-				if(rclash) clash=true; if(clash) goto DONE_CLASH_CHECK;
-				// linkp vs hyd
-				for(size_t i = 0; i < nlkp; i+=LS) {       // skip start of linkp vs. psi
-					if(i+LI >= nlkp) break;
-					rclash |= clash_check_hyd( multxv(xhr,lkp[i+LI]) ,hyd,hydgrid);
-				}		
-				if(rclash) clash=true; if(clash) goto DONE_CLASH_CHECK;
 				// linkp && linkh vs pet
 				for(size_t i = 0; i < npet; i+=LS) {
 					if( i+LI >= npet ) break;
 					struct VEC const v = multxv(xp,pet[i+LI]);
-					for(size_t ilp = 0; ilp < nlkp-11; ilp+=5) {      // skip end of linkp vs pet
-						rclash |= ( dist2v(v,lkp[ilp+0]) < 16.0 );
-						rclash |= ( dist2v(v,lkp[ilp+1]) < 16.0 );
-						rclash |= ( dist2v(v,lkp[ilp+2]) < 16.0 );								
-						rclash |= ( dist2v(v,lkp[ilp+3]) < 16.0 );
-						rclash |= ( dist2v(v,lkp[ilp+4]) < 16.0 );								
-					}
-					for(size_t ilh = 0; ilh < nlkh-5; ilh+=5) {
-						rclash |= ( dist2v(v,lkh[ilh+0]) < 16.0 );
-						rclash |= ( dist2v(v,lkh[ilh+1]) < 16.0 );
-						rclash |= ( dist2v(v,lkh[ilh+2]) < 16.0 );								
-						rclash |= ( dist2v(v,lkh[ilh+3]) < 16.0 );
-						rclash |= ( dist2v(v,lkh[ilh+4]) < 16.0 );								
-					}
 					if(need_to_check_psi(v)) rclash |= clash_check_psi(v,psi,psigrid);						
 				}		
 				if(rclash) clash=true; if(clash) goto DONE_CLASH_CHECK;
 			} else {
-				ONLY1 xh = multxx( stub(lkh[nlkh-3],lkh[nlkh-2],lkh[nlkh-1]) , hyd_stub );				
-				for(size_t i = 0; i < nlkh; i+=LS) if(i+LI < nlkh && lkh[i+LI].z < -3.0) rclash = true;
 				for(size_t i = 0; i < nhyd; i+=LS) minz[LI] = min( minz[LI], (i+LI<nhyd) ? multxv(xh,hyd[i+LI]).z : 9e9f );
 				for(uint c=LS/2;c>0;c/=2) { barrier(CLK_LOCAL_MEM_FENCE); if(c>LI) minz[LI] = min(minz[LI],minz[LI+c]); }
 				barrier(CLK_LOCAL_MEM_FENCE);
 				if(minz[0] < -3.0) { ONLY1 clash=true; goto DONE_CLASH_CHECK; }
-
-				for(size_t ih = 0; ih < nlkh; ih+=LS) {
-					if(ih+LI >= nlkh) break;
-					struct VEC const vh = lkh[ih+LI];
-					for(size_t ip  =       0; ip  < nlkp-5; ip+=5 ) {
-						rclash |= ( dist2v(vh,lkp[ip+0]) < 16.0 );
-						rclash |= ( dist2v(vh,lkp[ip+1]) < 16.0 );
-						rclash |= ( dist2v(vh,lkp[ip+2]) < 16.0 );
-						rclash |= ( dist2v(vh,lkp[ip+3]) < 16.0 );
-						rclash |= ( dist2v(vh,lkp[ip+4]) < 16.0 );
-					}
-					for(size_t ih2 = ih+LI+4; ih2 < nlkh-5; ih2+=5) {
-						rclash |= ( dist2v(vh,lkh[ih2+0]) < 16.0 );
-						rclash |= ( dist2v(vh,lkh[ih2+1]) < 16.0 );
-						rclash |= ( dist2v(vh,lkh[ih2+2]) < 16.0 );
-						rclash |= ( dist2v(vh,lkh[ih2+3]) < 16.0 );
-						rclash |= ( dist2v(vh,lkh[ih2+4]) < 16.0 );
-					}
-				}
-				if(rclash) clash=true; if(clash) goto DONE_CLASH_CHECK;
-				for(size_t ilh = 6; ilh < nlkh; ilh+=LS) {       // skip start of linkp vs. psi
-					rclash |= clash_check_psi( (ilh+LI<nlkh) ? lkh[ilh+LI] : vec(9e9,9e9,9e9) ,psi,psigrid);
-				}						
-				if(rclash) clash=true; if(clash) goto DONE_CLASH_CHECK;
-				// hyd vs. hlink & plink
-				for(size_t i = 0; i < nlkh-9; i+=LS) {        // skip end of linkh vs hyd
-					if( i+LI >= nlkh-9 ) break;
-					rclash |= clash_check_hyd( multxv(xhr,lkh[i+LI]), hyd, hydgrid );					
-				}
-				for(size_t i = 0; i < nlkp; i+=LS) {
-					if( i+LI >= nlkp ) break;
-					rclash |= clash_check_hyd( multxv(xhr,lkp[i+LI]) ,hyd, hydgrid );					
-				}
 
 				for(size_t i = 0; i < nhyd; i+=LS) {
 					if( i+LI >= nhyd ) break;
 					struct VEC const v = multxv(xh,hyd[i+LI]);
 					if(need_to_check_psi(v)) rclash |= clash_check_psi(v,psi,psigrid);			
 				}				
-				if(rclash) clash=true; if(clash) goto DONE_CLASH_CHECK;
-				for(size_t i = 0; i < npet; i+=LS) {
-					if( i+LI >= npet ) break;
-					struct VEC const v = multxv(xp,pet[i+LI]);
-					for(size_t ilh = 0; ilh < nlkh-5; ilh+=5) {
-						rclash |= ( dist2v(v,lkh[ilh+0]) < 16.0 );
-						rclash |= ( dist2v(v,lkh[ilh+1]) < 16.0 );
-						rclash |= ( dist2v(v,lkh[ilh+2]) < 16.0 );								
-						rclash |= ( dist2v(v,lkh[ilh+3]) < 16.0 );
-						rclash |= ( dist2v(v,lkh[ilh+4]) < 16.0 );								
-					}
-				}		
 				if(rclash) clash=true; if(clash) goto DONE_CLASH_CHECK;
 			}			
 			if( dist2v(hyd_cen,pet_cen) < 4057.24684269 ) {
@@ -334,8 +221,6 @@ __kernel void my_test_kernel(
 		
 		if( clash ) { // undo move if not accepted 
 			struct XFORM undo = xrev(move);
-			for(int i = idx+2; i < nlnk; i+=LS) 
-				if(LI+i < nlnk) (p_or_h?lkp:lkh)[LI+i] = multxv(undo,(p_or_h?lkp:lkh)[LI+i]);				
 			ONLY1 if(p_or_h) xp = multxx(undo,xp); else xh = multxx(undo,xh);			
 			ONLY1 status += ( (status > 0) ? 1 : 0 ); // add a fail to status if sampling
 		} else ONLY1 { // ACCEPT!
@@ -385,8 +270,6 @@ __kernel void my_test_kernel(
 	
 	// OUTPUT
 //	barrier(CLK_LOCAL_MEM_FENCE);
-	for(size_t i=0; i<nlkh; i+=LS) if((i+LI)<nlkh) out[GI*ntot     +i+LI] = lkh[i+LI];
-	for(size_t i=0; i<nlkp; i+=LS) if((i+LI)<nlkp) out[GI*ntot+nlkh+i+LI] = lkp[i+LI];
 	ONLY1 xout[3*GI+0] = xh;
 	ONLY1 xout[3*GI+1] = xp;
 	

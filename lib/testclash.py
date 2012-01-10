@@ -8,6 +8,7 @@ from clint.textui import progress
 
 OPTS = "-I/Users/sheffler/project/protoprot/ligh2t/lib -cl-single-precision-constant -cl-mad-enable -cl-no-signed-zeros -cl-fast-relaxed-math -w"
 
+#with open("nolinker.cl") as f: KERN = f.read()%vars()
 with open("testclash.cl") as f: KERN = f.read()%vars()
 isubs = "npsi nhyd npet nlkp nlkh ntot nstat NGPUITER LS GS nxpsi nypsi nzpsi nxhyd nyhyd nzhyd nxpet nypet nzpet"
 fsubs = "grid_size temperature"
@@ -34,8 +35,8 @@ def test():
 	LS,GS = 64,24
 	NITER,NGPUITER = 20,5000
 	lh,lp = 50,50
-	nstat = 6
-	for	temperature in (5,):
+	nstat = 7
+	for	temperature in (5.0,):
 		# inputs
 		components = "psi hyd pet lec ldn".split()
 		hyd_stub = get_stub(components,"hyd")
@@ -63,9 +64,10 @@ def test():
 		seed   = pyopencl.array.empty(queue, (1,)        , dtype=numpy. uint32); seed  .fill(0)
 		stat   = pyopencl.array.empty(queue, (GS,nstat)  , dtype=numpy.  int32); stat  .fill(0)
 		fstat  = pyopencl.array.empty(queue, (GS,nstat)  , dtype=numpy.float32); fstat .fill(0)
-		hist   = pyopencl.array.empty(queue, (GS,300)    , dtype=numpy. uint32); hist  .fill(0)
+		hist   = pyopencl.array.empty(queue, (300,)      , dtype=numpy. uint32); hist  .fill(0)
+		hist6  = pyopencl.array.empty(queue, (9,20,23,11,24,12), dtype=numpy.uint32); hist6.fill(0)
 
-		kargs = [x.data for x in data+[ranlux,seed,out,xout,rout,vout,status,stat,fstat,hist] ]
+		kargs = [x.data for x in data+[ranlux,seed,out,xout,rout,vout,status,stat,fstat,hist,hist6] ]
 		my_test_kernel = pyopencl.Program(ctx,KERN%vars()).build(OPTS).my_test_kernel
 
 		os.system("rm -f ../test/*.pdb")
@@ -91,16 +93,33 @@ def test():
 			os.system("cat ../test/.tmp >> "+fn)
 			os.system("echo ENDMDL >> %s"%(fn))
 		NOUT = NITER*NGPUITER*GS
-		Nsamp = numpy.sum(stat.get()[:,0])
+		Ntrial = numpy.sum(stat.get()[:,0])
+		Nhist  = numpy.sum(stat.get()[:,2])
 		print "COMPUTE RATE:",NOUT/(time.time()-t)
-		h = numpy.apply_along_axis(numpy.sum, 0, hist.get())		
-		numpy.savetxt("../test/hist_%i_%i_%f.dat"%(temperature,NOUT,sum(stat.get()[:,1]!=0)),h)
+		
+		h = hist.get()#numpy.apply_along_axis(numpy.sum, 0, hist.get())		
+		numpy.savetxt("../test/hist_%i_%i_%i_%i.dat"%(lh,lp,temperature,NOUT),h,"%i")
 		print h[range(20)].reshape((2,10))
-		print "samp frac: %f"%(float(Nsamp)/NOUT)
+		print "samp frac: %f"%(float(Ntrial)/NOUT) , "sample loss:", float(Nhist-sum(h))/Nhist
 		# print
-		print numpy.sum(stat.get()[:,1]!=0), "of",GS,"produced results"
 		print numpy.transpose(status.get())
 		print stat
+		print
+		h6 = hist6.get()
+		print h6.shape
+		print h6.ravel().shape
+		print numpy.sum(h6.ravel()),Nhist,numpy.sum(h[range(16)])
+		numpy.savetxt("../test/hist6_%i_%i_%i_%i.dat"%(lh,lp,temperature,NOUT),h6.ravel(),"%i")
+		w = numpy.where(h6>0)
+		#for i in range(w[0].shape[0]): print "h6[%i,%i,%i,%i,%i,%i]"%(w[5][i]+1,w[4][i]+1,w[3][i]+1,w[2][i]+1,w[1][i]+1,w[0][i]+1)
+		# h6 = hist6.get()
+		# print h6
+		# print min(h6[:, 0]),max(h6[:, 1])
+		# print min(h6[:, 2]),max(h6[:, 3])
+		# print min(h6[:, 4]),max(h6[:, 5])				
+		# print min(h6[:, 6]),max(h6[:, 7])				
+		# print min(h6[:, 8]),max(h6[:, 9])				
+		# print min(h6[:,10]),max(h6[:,11])				
 		# plt.semilogy(h)
 		# plt.show()
 
