@@ -33,10 +33,15 @@ def get_stub(components,name):
 def test():
 	ctx,queue = clutil.my_get_gpu_context()
 	LS,GS = 64,24
-	NITER,NGPUITER = 20,5000
-	lh,lp = 50,50
+	NITER,NGPUITER = 1000,2000
+	lh,lp = 27,27
 	nstat = 7
-	for	temperature in (5.0,):
+	#for	lh in range(3,51,1):
+	#  for lp in (16,21,27):		
+	for temperature in (5,10,15,20,30,40,50,999999999):
+		# print lh,lp
+		print temperature
+		#temperature = 5.0
 		# inputs
 		components = "psi hyd pet lec ldn".split()
 		hyd_stub = get_stub(components,"hyd")
@@ -56,7 +61,7 @@ def test():
 		nlkh,nlkp = lh*3,lp*3
 		ntot = nlkh+nlkp #npsi+nhyd+npet+nlkh+nlkp
 		ranlux = pyopencl.array.empty(queue, (112*GS,)   , dtype=numpy.   int8); ranlux.fill(17)
-		out    = pyopencl.array.empty(queue, (3*ntot*GS,), dtype=numpy.float32); out   .fill(0)
+		out    = pyopencl.array.empty(queue, (3*ntot*GS+1,), dtype=numpy.float32); out   .fill(0)
 		xout   = pyopencl.array.empty(queue, (12*3*GS,)  , dtype=numpy.float32); xout  .fill(0)
 		rout   = pyopencl.array.empty(queue, (GS,)       , dtype=numpy.float32); rout  .fill(0)
 		vout   = pyopencl.array.empty(queue, (GS,6)      , dtype=numpy.float32); vout  .fill(0)
@@ -70,46 +75,45 @@ def test():
 		kargs = [x.data for x in data+[ranlux,seed,out,xout,rout,vout,status,stat,fstat,hist,hist6] ]
 		my_test_kernel = pyopencl.Program(ctx,KERN%vars()).build(OPTS).my_test_kernel
 
-		os.system("rm -f ../test/*.pdb")
+		#os.system("rm -f ../test/*.pdb")
 		seed.fill(random.getrandbits(31))
 		t = time.time()
-		for ITER in range(1,NITER+1): 			
-			my_test_kernel(queue,(LS,GS),(LS,1), *kargs ).wait();
-			print ITER
-		for i in range(GS):
-			if stat.get()[i,1] == 0: continue
-			if not ITER in vars(): ITER = 0
-			ary = out.get()			
-			fn = "../test/test_%i_%i_%i.pdb"%(i,lh,lp)
-			dump_pdb(ary[i*len(ary)/GS:(i+1)*len(ary)/GS],"../test/.tmp")
-			os.system("echo MODEL %i >> %s"%(ITER,fn))
-			os.system("cat ../test/.tmp >> "+fn)			
-			xform_pdb(nparray_to_XFORMs(xout.get())[3*i+0],"../pdb/hyda1_hash_bb.pdb","../test/.tmp")
-			os.system("cat ../test/.tmp >> "+fn)
-			xform_pdb(nparray_to_XFORMs(xout.get())[3*i+1],"../pdb/petf_hash_bb.pdb" ,"../test/.tmp")
-			os.system("cat ../test/.tmp >> "+fn)
-			# xform_pdb(nparray_to_XFORMs(xout.get())[3*i+2],"../pdb/petf_hash_bb.pdb" ,"../test/hyda_%i.pdb"%i)
-			dump_pdb(vout.get()[i,],"../test/.tmp","X")
-			os.system("cat ../test/.tmp >> "+fn)
-			os.system("echo ENDMDL >> %s"%(fn))
+		for ITER in range(1,NITER+1): 
+			print ITER			
+			my_test_kernel(queue,(LS,GS),(LS,1), *kargs ).wait();			
+		# for i in range(GS):
+		# 	if stat.get()[i,1] == 0: continue
+		# 	if not ITER in vars(): ITER = 0
+		# 	ary = out.get()			
+		# 	fn = "../test/test_%i_%i_%i.pdb"%(i,lh,lp)
+		# 	dump_pdb(ary[i*len(ary)/GS:(i+1)*len(ary)/GS],"../test/.tmp")
+		# 	os.system("echo MODEL %i >> %s"%(ITER,fn))
+		# 	os.system("cat ../test/.tmp >> "+fn)			
+		# 	xform_pdb(nparray_to_XFORMs(xout.get())[3*i+0],"../pdb/hyda1_hash_bb.pdb","../test/.tmp")
+		# 	os.system("cat ../test/.tmp >> "+fn)
+		# 	xform_pdb(nparray_to_XFORMs(xout.get())[3*i+1],"../pdb/petf_hash_bb.pdb" ,"../test/.tmp")
+		# 	os.system("cat ../test/.tmp >> "+fn)
+		# 	# xform_pdb(nparray_to_XFORMs(xout.get())[3*i+2],"../pdb/petf_hash_bb.pdb" ,"../test/hyda_%i.pdb"%i)
+		# 	dump_pdb(vout.get()[i,],"../test/.tmp","X")
+		# 	os.system("cat ../test/.tmp >> "+fn)
+		# 	os.system("echo ENDMDL >> %s"%(fn))
 		NOUT = NITER*NGPUITER*GS
 		Ntrial = numpy.sum(stat.get()[:,0])
 		Nhist  = numpy.sum(stat.get()[:,2])
-		print "COMPUTE RATE:",NOUT/(time.time()-t)
-		
 		h = hist.get()#numpy.apply_along_axis(numpy.sum, 0, hist.get())		
+		#print "COMPUTE RATE:",NOUT/(time.time()-t)		
 		numpy.savetxt("../test/hist_%i_%i_%i_%i.dat"%(lh,lp,temperature,NOUT),h,"%i")
-		print h[range(20)].reshape((2,10))
-		print "samp frac: %f"%(float(Ntrial)/NOUT) , "sample loss:", float(Nhist-sum(h))/Nhist
+		#print h[range(20)].reshape((2,10))
+		#print "samp frac: %f"%(float(Ntrial)/NOUT) , "sample loss:", float(Nhist-sum(h))/Nhist
 		# print
-		print numpy.transpose(status.get())
-		print stat
-		print
+		#print numpy.transpose(status.get())
+		#print stat
+		#print
 		h6 = hist6.get()
-		print h6.shape
-		print h6.ravel().shape
-		print numpy.sum(h6.ravel()),Nhist,numpy.sum(h[range(16)])
-		numpy.savetxt("../test/hist6_%i_%i_%i_%i.dat"%(lh,lp,temperature,NOUT),h6.ravel(),"%i")
+		#print h6.shape
+		#print h6.ravel().shape
+		#print numpy.sum(h6.ravel()),Nhist,numpy.sum(h[range(16)])
+#		numpy.savetxt("../test/hist6_%i_%i_%i_%i.dat"%(lh,lp,temperature,NOUT),h6.ravel(),"%i")
 		w = numpy.where(h6>0)
 		#for i in range(w[0].shape[0]): print "h6[%i,%i,%i,%i,%i,%i]"%(w[5][i]+1,w[4][i]+1,w[3][i]+1,w[2][i]+1,w[1][i]+1,w[0][i]+1)
 		# h6 = hist6.get()

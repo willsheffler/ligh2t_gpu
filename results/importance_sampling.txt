@@ -1,0 +1,1498 @@
+
+R version 2.14.0 (2011-10-31)
+Copyright (C) 2011 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[R.app GUI 1.42 (5933) x86_64-apple-darwin9.8.0]
+
+[History restored from /Users/sheffler/.Rapp.history]
+
+> h23 = read.table("~/project/protoprot/ligh2t/test/hist_31_23_5_2400000.dat")[[1]]
+> h24 = read.table("~/project/protoprot/ligh2t/test/hist_31_24_5_2400000.dat")[[1]]
+> h25 = read.table("~/project/protoprot/ligh2t/test/hist_31_25_5_2400000.dat")[[1]]
+> plot(h23)
+> plot(h23,type='l')
+> lines(h24,col=2)
+> lines(h25,col=3)
+> 
+> 
+> h = array(0,c(27,50,300))
+> for(ih in 1:50) {
++ for(ip in c(16,21,27)) {
++ 	h[ip,ih] = read.table("~/project/protoprot/ligh2t/hist_9_27_5_480000.dat")[[1]]
++ }
++ }
+Error in file(file, "rt") : cannot open the connection
+In addition: Warning message:
+In file(file, "rt") :
+  cannot open file '/Users/sheffler/project/protoprot/ligh2t/hist_9_27_5_480000.dat': No such file or directory
+> 
+> 
+> h = array(0,c(27,50,300))
+> for(ih in 1:50) {
++ for(ip in c(16,21,27)) {
++ 	h[ip,ih] = read.table(paste("~/project/protoprot/ligh2t/test/hist_",ih,"_",ip,"_5_480000.dat",sep="")[[1]]
++ }
+Error: unexpected '}' in:
+"        h[ip,ih] = read.table(paste("~/project/protoprot/ligh2t/test/hist_",ih,"_",ip,"_5_480000.dat",sep="")[[1]]
+}"
+> }
+Error: unexpected '}' in "}"
+> 
+> 
+> h = array(0,c(27,50,300))
+> for(ih in 1:50) {
++ 	for(ip in c(16,21,27)) {
++ 		h[ip,ih] = read.table(paste("~/project/protoprot/ligh2t/test/hist_",ih,"_",ip,"_5_480000.dat",sep=""))[[1]]
++ 	}
++ }
+Error in file(file, "rt") : cannot open the connection
+In addition: Warning message:
+In file(file, "rt") :
+  cannot open file '/Users/sheffler/project/protoprot/ligh2t/test/hist_1_16_5_480000.dat': No such file or directory
+> 
+> 
+> 
+> h = array(0,c(27,50,300))
+> for(ih in 3:50) {
++ 	for(ip in c(16,21,27)) {
++ 		h[ip,ih] = read.table(paste("~/project/protoprot/ligh2t/test/hist_",ih,"_",ip,"_5_480000.dat",sep=""))[[1]]
++ 	}
++ }
+Error in h[ip, ih] = read.table(paste("~/project/protoprot/ligh2t/test/hist_",  : 
+  incorrect number of subscripts on matrix
+> 
+> h = array(0,c(27,50,300))
+> for(ih in 3:50) {
++ 	for(ip in c(16,21,27)) {
++ 		h[ip,ih,] = read.table(paste("~/project/protoprot/ligh2t/test/hist_",ih,"_",ip,"_5_480000.dat",sep=""))[[1]]
++ 	}
++ }
+> 
+> 
+> sum(h)
+[1] 48694805
+> sum(h)/140
+[1] 347820
+> plot(h[16,10,])
+> plot(h[16,10,],type='l')
+> plot(h[16,20,],type='l')
+> plot(h[16,30,],type='l')
+> plot(h[16,50,],type='l')
+> exp(-5)
+[1] 0.006737947
+> exp(1:300-0.5)
+  [1]  1.648721e+00  4.481689e+00  1.218249e+01  3.311545e+01  9.001713e+01  2.446919e+02
+  [7]  6.651416e+02  1.808042e+03  4.914769e+03  1.335973e+04  3.631550e+04  9.871577e+04
+ [13]  2.683373e+05  7.294164e+05  1.982759e+06  5.389698e+06  1.465072e+07  3.982478e+07
+ [19]  1.082550e+08  2.942676e+08  7.999022e+08  2.174360e+09  5.910522e+09  1.606646e+10
+ [25]  4.367318e+10  1.187160e+11  3.227036e+11  8.771993e+11  2.384475e+12  6.481674e+12
+ [31]  1.761902e+13  4.789346e+13  1.301879e+14  3.538874e+14  9.619658e+14  2.614894e+15
+ [37]  7.108019e+15  1.932160e+16  5.252155e+16  1.427684e+17  3.880847e+17  1.054924e+18
+ [43]  2.867580e+18  7.794889e+18  2.118871e+19  5.759688e+19  1.565645e+20  4.255865e+20
+ [49]  1.156864e+21  3.144683e+21  8.548134e+21  2.323624e+22  6.316264e+22  1.716939e+23
+ [55]  4.667123e+23  1.268656e+24  3.448564e+24  9.374168e+24  2.548163e+25  6.926625e+25
+ [61]  1.882852e+26  5.118122e+26  1.391250e+27  3.781809e+27  1.028002e+28  2.794400e+28
+ [67]  7.595967e+28  2.064798e+29  5.612702e+29  1.525691e+30  4.147257e+30  1.127341e+31
+ [73]  3.064432e+31  8.329989e+31  2.264326e+32  6.155075e+32  1.673123e+33  4.548020e+33
+ [79]  1.236280e+34  3.360557e+34  9.134942e+34  2.483135e+35  6.749860e+35  1.834802e+36
+ [85]  4.987509e+36  1.355746e+37  3.685299e+37  1.001768e+38  2.723088e+38  7.402120e+38
+ [91]  2.012105e+39  5.469468e+39  1.486756e+40  4.041421e+40  1.098572e+41  2.986228e+41
+ [97]  8.117410e+41  2.206541e+42  5.998000e+42  1.630425e+43  4.431956e+43  1.204731e+44
+[103]  3.274797e+44  8.901821e+44  2.419766e+45  6.577606e+45  1.787979e+46  4.860230e+46
+[109]  1.321147e+47  3.591251e+47  9.762033e+47  2.653596e+48  7.213221e+48  1.960757e+49
+[115]  5.329889e+49  1.448814e+50  3.938285e+50  1.070537e+51  2.910021e+51  7.910257e+51
+[121]  2.150231e+52  5.844933e+52  1.588818e+53  4.318854e+53  1.173986e+54  3.191225e+54
+[127]  8.674650e+54  2.358014e+55  6.409748e+55  1.742350e+56  4.736198e+56  1.287432e+57
+[133]  3.499604e+57  9.512909e+57  2.585877e+58  7.029142e+58  1.910719e+59  5.193872e+59
+[139]  1.411841e+60  3.837781e+60  1.043217e+61  2.835758e+61  7.708390e+61  2.095358e+62
+[145]  5.695773e+62  1.548271e+63  4.208638e+63  1.144026e+64  3.109786e+64  8.453276e+64
+[151]  2.297839e+65  6.246173e+65  1.697886e+66  4.615332e+66  1.254577e+67  3.410295e+67
+[157]  9.270143e+67  2.519886e+68  6.849760e+68  1.861958e+69  5.061326e+69  1.375811e+70
+[163]  3.739842e+70  1.016595e+71  2.763391e+71  7.511674e+71  2.041885e+72  5.550418e+72
+[169]  1.508760e+73  4.101235e+73  1.114831e+74  3.030426e+74  8.237551e+74  2.239199e+75
+[175]  6.086773e+75  1.654556e+76  4.497551e+76  1.222561e+77  3.323265e+77  9.033572e+77
+[181]  2.455579e+78  6.674957e+78  1.814441e+79  4.932163e+79  1.340701e+80  3.644403e+80
+[187]  9.906514e+80  2.692870e+81  7.319979e+81  1.989777e+82  5.408774e+82  1.470257e+83
+[193]  3.996573e+83  1.086381e+84  2.953090e+84  8.027332e+84  2.182055e+85  5.931440e+85
+[199]  1.612333e+86  4.382775e+86  1.191362e+87  3.238457e+87  8.803038e+87  2.392914e+88
+[205]  6.504614e+88  1.768137e+89  4.806296e+89  1.306487e+90  3.551399e+90  9.653704e+90
+[211]  2.624149e+91  7.133176e+91  1.938998e+92  5.270744e+92  1.432737e+93  3.894582e+93
+[217]  1.058657e+94  2.877728e+94  7.822477e+94  2.126370e+95  5.780072e+95  1.571187e+96
+[223]  4.270928e+96  1.160959e+97  3.155812e+97  8.578388e+97  2.331848e+98  6.338619e+98
+[229]  1.723015e+99  4.683641e+99 1.273146e+100 3.460769e+100 9.407344e+100 2.557181e+101
+[235] 6.951140e+101 1.889516e+102 5.136236e+102 1.396174e+103 3.795194e+103 1.031641e+104
+[241] 2.804290e+104 7.622850e+104 2.072105e+105 5.632567e+105 1.531090e+106 4.161935e+106
+[247] 1.131331e+107 3.075277e+107 8.359470e+107 2.272340e+108 6.176859e+108 1.679044e+109
+[253] 4.564116e+109 1.240655e+110 3.372451e+110 9.167272e+110 2.491923e+111 6.773749e+111
+[259] 1.841296e+112 5.005161e+112 1.360544e+113 3.698342e+113 1.005313e+114 2.732725e+114
+[265] 7.428318e+114 2.019226e+115 5.488826e+115 1.492017e+116 4.055724e+116 1.102460e+117
+[271] 2.996797e+117 8.146139e+117 2.214350e+118 6.019228e+118 1.636196e+119 4.447641e+119
+[277] 1.208994e+120 3.286387e+120 8.933327e+120 2.428330e+121 6.600885e+121 1.794307e+122
+[283] 4.877431e+122 1.325823e+123 3.603961e+123 9.796582e+123 2.662987e+124 7.238749e+124
+[289] 1.967696e+125 5.348753e+125 1.453942e+126 3.952223e+126 1.074326e+127 2.920320e+127
+[295] 7.938253e+127 2.157841e+128 5.865619e+128 1.594441e+129 4.334139e+129 1.178141e+130
+> exp((1:300-0.5)/5)
+  [1] 1.105171e+00 1.349859e+00 1.648721e+00 2.013753e+00 2.459603e+00 3.004166e+00
+  [7] 3.669297e+00 4.481689e+00 5.473947e+00 6.685894e+00 8.166170e+00 9.974182e+00
+ [13] 1.218249e+01 1.487973e+01 1.817415e+01 2.219795e+01 2.711264e+01 3.311545e+01
+ [19] 4.044730e+01 4.940245e+01 6.034029e+01 7.369979e+01 9.001713e+01 1.099472e+02
+ [25] 1.342898e+02 1.640219e+02 2.003368e+02 2.446919e+02 2.988674e+02 3.650375e+02
+ [31] 4.458578e+02 5.445719e+02 6.651416e+02 8.124058e+02 9.922747e+02 1.211967e+03
+ [37] 1.480300e+03 1.808042e+03 2.208348e+03 2.697282e+03 3.294468e+03 4.023872e+03
+ [43] 4.914769e+03 6.002912e+03 7.331974e+03 8.955293e+03 1.093802e+04 1.335973e+04
+ [49] 1.631761e+04 1.993037e+04 2.434301e+04 2.973262e+04 3.631550e+04 4.435586e+04
+ [55] 5.417636e+04 6.617116e+04 8.082164e+04 9.871577e+04 1.205717e+05 1.472666e+05
+ [61] 1.798719e+05 2.196960e+05 2.683373e+05 3.277479e+05 4.003122e+05 4.889424e+05
+ [67] 5.971956e+05 7.294164e+05 8.909112e+05 1.088161e+06 1.329083e+06 1.623346e+06
+ [73] 1.982759e+06 2.421748e+06 2.957929e+06 3.612823e+06 4.412712e+06 5.389698e+06
+ [79] 6.582993e+06 8.040485e+06 9.820671e+06 1.199499e+07 1.465072e+07 1.789443e+07
+ [85] 2.185631e+07 2.669535e+07 3.260578e+07 3.982478e+07 4.864210e+07 5.941160e+07
+ [91] 7.256549e+07 8.863169e+07 1.082550e+08 1.322229e+08 1.614975e+08 1.972534e+08
+ [97] 2.409259e+08 2.942676e+08 3.594192e+08 4.389956e+08 5.361905e+08 6.549045e+08
+[103] 7.999022e+08 9.770027e+08 1.193314e+09 1.457517e+09 1.780215e+09 2.174360e+09
+[109] 2.655769e+09 3.243763e+09 3.961941e+09 4.839126e+09 5.910522e+09 7.219128e+09
+[115] 8.817463e+09 1.076967e+10 1.315411e+10 1.606646e+10 1.962362e+10 2.396835e+10
+[121] 2.927501e+10 3.575657e+10 4.367318e+10 5.334254e+10 6.515273e+10 7.957772e+10
+[127] 9.719645e+10 1.187160e+11 1.450001e+11 1.771035e+11 2.163147e+11 2.642073e+11
+[133] 3.227036e+11 3.941510e+11 4.814172e+11 5.880042e+11 7.181900e+11 8.771993e+11
+[139] 1.071414e+12 1.308628e+12 1.598361e+12 1.952243e+12 2.384475e+12 2.912404e+12
+[145] 3.557218e+12 4.344796e+12 5.306746e+12 6.481674e+12 7.916735e+12 9.669522e+12
+[151] 1.181038e+13 1.442523e+13 1.761902e+13 2.151992e+13 2.628449e+13 3.210394e+13
+[157] 3.921185e+13 4.789346e+13 5.849720e+13 7.144864e+13 8.726757e+13 1.065888e+14
+[163] 1.301879e+14 1.590119e+14 1.942175e+14 2.372178e+14 2.897385e+14 3.538874e+14
+[169] 4.322391e+14 5.279380e+14 6.448249e+14 7.875910e+14 9.619658e+14 1.174948e+15
+[175] 1.435084e+15 1.752816e+15 2.140894e+15 2.614894e+15 3.193839e+15 3.900964e+15
+[181] 4.764648e+15 5.819554e+15 7.108019e+15 8.681754e+15 1.060392e+16 1.295166e+16
+[187] 1.581919e+16 1.932160e+16 2.359945e+16 2.882444e+16 3.520625e+16 4.300101e+16
+[193] 5.252155e+16 6.414997e+16 7.835295e+16 9.570051e+16 1.168889e+17 1.427684e+17
+[199] 1.743777e+17 2.129854e+17 2.601410e+17 3.177369e+17 3.880847e+17 4.740077e+17
+[205] 5.789543e+17 7.071364e+17 8.636984e+17 1.054924e+18 1.288487e+18 1.573761e+18
+[211] 1.922196e+18 2.347776e+18 2.867580e+18 3.502470e+18 4.277926e+18 5.225071e+18
+[217] 6.381916e+18 7.794889e+18 9.520700e+18 1.162861e+19 1.420321e+19 1.734785e+19
+[223] 2.118871e+19 2.587994e+19 3.160984e+19 3.860834e+19 4.715633e+19 5.759688e+19
+[229] 7.034898e+19 8.592444e+19 1.049484e+20 1.281842e+20 1.565645e+20 1.912284e+20
+[235] 2.335668e+20 2.852792e+20 3.484408e+20 4.255865e+20 5.198126e+20 6.349005e+20
+[241] 7.754692e+20 9.471603e+20 1.156864e+21 1.412997e+21 1.725839e+21 2.107944e+21
+[247] 2.574649e+21 3.144683e+21 3.840924e+21 4.691316e+21 5.729986e+21 6.998620e+21
+[253] 8.548134e+21 1.044071e+22 1.275232e+22 1.557572e+22 1.902422e+22 2.323624e+22
+[259] 2.838081e+22 3.466439e+22 4.233919e+22 5.171320e+22 6.316264e+22 7.714703e+22
+[265] 9.422759e+22 1.150898e+23 1.405710e+23 1.716939e+23 2.097074e+23 2.561372e+23
+[271] 3.128466e+23 3.821117e+23 4.667123e+23 5.700437e+23 6.962530e+23 8.504053e+23
+[277] 1.038687e+24 1.268656e+24 1.549539e+24 1.892612e+24 2.311641e+24 2.823445e+24
+[283] 3.448564e+24 4.212085e+24 5.144652e+24 6.283692e+24 7.674919e+24 9.374168e+24
+[289] 1.144963e+25 1.398461e+25 1.708085e+25 2.086259e+25 2.548163e+25 3.112333e+25
+[295] 3.801412e+25 4.643056e+25 5.671041e+25 6.926625e+25 8.460199e+25 1.033331e+26
+> exp((1:300-0.5)/5)
+  [1] 1.105171e+00 1.349859e+00 1.648721e+00 2.013753e+00 2.459603e+00 3.004166e+00
+  [7] 3.669297e+00 4.481689e+00 5.473947e+00 6.685894e+00 8.166170e+00 9.974182e+00
+ [13] 1.218249e+01 1.487973e+01 1.817415e+01 2.219795e+01 2.711264e+01 3.311545e+01
+ [19] 4.044730e+01 4.940245e+01 6.034029e+01 7.369979e+01 9.001713e+01 1.099472e+02
+ [25] 1.342898e+02 1.640219e+02 2.003368e+02 2.446919e+02 2.988674e+02 3.650375e+02
+ [31] 4.458578e+02 5.445719e+02 6.651416e+02 8.124058e+02 9.922747e+02 1.211967e+03
+ [37] 1.480300e+03 1.808042e+03 2.208348e+03 2.697282e+03 3.294468e+03 4.023872e+03
+ [43] 4.914769e+03 6.002912e+03 7.331974e+03 8.955293e+03 1.093802e+04 1.335973e+04
+ [49] 1.631761e+04 1.993037e+04 2.434301e+04 2.973262e+04 3.631550e+04 4.435586e+04
+ [55] 5.417636e+04 6.617116e+04 8.082164e+04 9.871577e+04 1.205717e+05 1.472666e+05
+ [61] 1.798719e+05 2.196960e+05 2.683373e+05 3.277479e+05 4.003122e+05 4.889424e+05
+ [67] 5.971956e+05 7.294164e+05 8.909112e+05 1.088161e+06 1.329083e+06 1.623346e+06
+ [73] 1.982759e+06 2.421748e+06 2.957929e+06 3.612823e+06 4.412712e+06 5.389698e+06
+ [79] 6.582993e+06 8.040485e+06 9.820671e+06 1.199499e+07 1.465072e+07 1.789443e+07
+ [85] 2.185631e+07 2.669535e+07 3.260578e+07 3.982478e+07 4.864210e+07 5.941160e+07
+ [91] 7.256549e+07 8.863169e+07 1.082550e+08 1.322229e+08 1.614975e+08 1.972534e+08
+ [97] 2.409259e+08 2.942676e+08 3.594192e+08 4.389956e+08 5.361905e+08 6.549045e+08
+[103] 7.999022e+08 9.770027e+08 1.193314e+09 1.457517e+09 1.780215e+09 2.174360e+09
+[109] 2.655769e+09 3.243763e+09 3.961941e+09 4.839126e+09 5.910522e+09 7.219128e+09
+[115] 8.817463e+09 1.076967e+10 1.315411e+10 1.606646e+10 1.962362e+10 2.396835e+10
+[121] 2.927501e+10 3.575657e+10 4.367318e+10 5.334254e+10 6.515273e+10 7.957772e+10
+[127] 9.719645e+10 1.187160e+11 1.450001e+11 1.771035e+11 2.163147e+11 2.642073e+11
+[133] 3.227036e+11 3.941510e+11 4.814172e+11 5.880042e+11 7.181900e+11 8.771993e+11
+[139] 1.071414e+12 1.308628e+12 1.598361e+12 1.952243e+12 2.384475e+12 2.912404e+12
+[145] 3.557218e+12 4.344796e+12 5.306746e+12 6.481674e+12 7.916735e+12 9.669522e+12
+[151] 1.181038e+13 1.442523e+13 1.761902e+13 2.151992e+13 2.628449e+13 3.210394e+13
+[157] 3.921185e+13 4.789346e+13 5.849720e+13 7.144864e+13 8.726757e+13 1.065888e+14
+[163] 1.301879e+14 1.590119e+14 1.942175e+14 2.372178e+14 2.897385e+14 3.538874e+14
+[169] 4.322391e+14 5.279380e+14 6.448249e+14 7.875910e+14 9.619658e+14 1.174948e+15
+[175] 1.435084e+15 1.752816e+15 2.140894e+15 2.614894e+15 3.193839e+15 3.900964e+15
+[181] 4.764648e+15 5.819554e+15 7.108019e+15 8.681754e+15 1.060392e+16 1.295166e+16
+[187] 1.581919e+16 1.932160e+16 2.359945e+16 2.882444e+16 3.520625e+16 4.300101e+16
+[193] 5.252155e+16 6.414997e+16 7.835295e+16 9.570051e+16 1.168889e+17 1.427684e+17
+[199] 1.743777e+17 2.129854e+17 2.601410e+17 3.177369e+17 3.880847e+17 4.740077e+17
+[205] 5.789543e+17 7.071364e+17 8.636984e+17 1.054924e+18 1.288487e+18 1.573761e+18
+[211] 1.922196e+18 2.347776e+18 2.867580e+18 3.502470e+18 4.277926e+18 5.225071e+18
+[217] 6.381916e+18 7.794889e+18 9.520700e+18 1.162861e+19 1.420321e+19 1.734785e+19
+[223] 2.118871e+19 2.587994e+19 3.160984e+19 3.860834e+19 4.715633e+19 5.759688e+19
+[229] 7.034898e+19 8.592444e+19 1.049484e+20 1.281842e+20 1.565645e+20 1.912284e+20
+[235] 2.335668e+20 2.852792e+20 3.484408e+20 4.255865e+20 5.198126e+20 6.349005e+20
+[241] 7.754692e+20 9.471603e+20 1.156864e+21 1.412997e+21 1.725839e+21 2.107944e+21
+[247] 2.574649e+21 3.144683e+21 3.840924e+21 4.691316e+21 5.729986e+21 6.998620e+21
+[253] 8.548134e+21 1.044071e+22 1.275232e+22 1.557572e+22 1.902422e+22 2.323624e+22
+[259] 2.838081e+22 3.466439e+22 4.233919e+22 5.171320e+22 6.316264e+22 7.714703e+22
+[265] 9.422759e+22 1.150898e+23 1.405710e+23 1.716939e+23 2.097074e+23 2.561372e+23
+[271] 3.128466e+23 3.821117e+23 4.667123e+23 5.700437e+23 6.962530e+23 8.504053e+23
+[277] 1.038687e+24 1.268656e+24 1.549539e+24 1.892612e+24 2.311641e+24 2.823445e+24
+[283] 3.448564e+24 4.212085e+24 5.144652e+24 6.283692e+24 7.674919e+24 9.374168e+24
+[289] 1.144963e+25 1.398461e+25 1.708085e+25 2.086259e+25 2.548163e+25 3.112333e+25
+[295] 3.801412e+25 4.643056e+25 5.671041e+25 6.926625e+25 8.460199e+25 1.033331e+26
+> h = array(0,c(27,50,300))
+> for(ih in 3:50) {
++ 	for(ip in c(16,21,27)) {
++ 		tmp = exp((1:300-0.5)/5)
++ 		tmp = tmp * exp((1:300-0.5)/5)
++ 		h[ip,ih,] = tmp / sum(tmp)
++ 	}
++ }
+> 
+> plot(h[16,50,],type='l')
+> plot(h[16,50,1:30],type='l')
+> plot(h[16,50,1:20],type='l')
+> 
+> 
+> 
+> h = array(0,c(11,300))
+> for(ih in c(1,2,4,8,16,32,64,128,256,512,1024)) {
++ 		tmp = read.table(paste("~/project/protoprot/ligh2t/test/hist_30_30_",i,"_1200000.dat",sep=""))[[1]]
++ 		tmp = tmp * exp((1:300-0.5)/5)
++ 		h[ip,ih,] = tmp / sum(tmp)
++ }
+Error in paste("~/project/protoprot/ligh2t/test/hist_30_30_", i, "_1200000.dat",  : 
+  object 'i' not found
+> 
+> h = array(0,c(11,300))
+> for(i in c(1,2,4,8,16,32,64,128,256,512,1024)) {
++ 		tmp = read.table(paste("~/project/protoprot/ligh2t/test/hist_30_30_",i,"_1200000.dat",sep=""))[[1]]
++ 		tmp = tmp * exp((1:300-0.5)/5)
++ 		h[ip,ih,] = tmp / sum(tmp)
++ }
+Error in h[ip, ih, ] = tmp/sum(tmp) : incorrect number of subscripts
+> 
+> 
+> h = array(0,c(11,300))
+> for(i in c(1,2,4,8,16,32,64,128,256,512,1024)) {
++ 		tmp = read.table(paste("~/project/protoprot/ligh2t/test/hist_30_30_",i,"_1200000.dat",sep=""))[[1]]
++ 		tmp = tmp * exp((1:300-0.5)/5)
++ 		h[i,] = tmp / sum(tmp)
++ }
+Error in h[i, ] = tmp/sum(tmp) : subscript out of bounds
+> 
+> h = array(0,c(11,300))
+> for(i in c(1,2,4,8,16,32,64,128,256,512,1024)) {
++ 		tmp = read.table(paste("~/project/protoprot/ligh2t/test/hist_30_30_",i,"_1200000.dat",sep=""))[[1]]
++ 		#tmp = tmp * exp((1:300-0.5)/5)
++ 		h[log2(i)+1,] = tmp / sum(tmp)
++ }
+> 
+> h[,1]
+ [1] 0 0 0 0 0 0 0 0 0 0 0
+> h[,100]
+ [1] 0.001107217 0.001030984 0.002428006 0.003267363 0.005062195 0.009815665 0.010773384
+ [8] 0.009542706 0.009179531 0.007829312 0.009671453
+> h[1,]
+  [1] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+  [7] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 3.389440e-05 2.847129e-04
+ [13] 2.074337e-03 1.368656e-02 3.404127e-02 4.253521e-02 3.917289e-02 3.270358e-02
+ [19] 2.643537e-02 2.234545e-02 2.077275e-02 2.093318e-02 2.234545e-02 2.436329e-02
+ [25] 2.746802e-02 2.991294e-02 2.982933e-02 3.169352e-02 3.177713e-02 3.430113e-02
+ [31] 3.341310e-02 2.842158e-02 2.551570e-02 2.392945e-02 2.460507e-02 2.484685e-02
+ [37] 2.613710e-02 2.356339e-02 2.088121e-02 1.917971e-02 1.622186e-02 1.401872e-02
+ [43] 1.252737e-02 1.130491e-02 1.002822e-02 8.765091e-03 7.576528e-03 7.266959e-03
+ [49] 7.059073e-03 6.964169e-03 6.464792e-03 5.902145e-03 5.393729e-03 5.572239e-03
+ [55] 5.140650e-03 4.593821e-03 4.349781e-03 4.119299e-03 3.561171e-03 3.750980e-03
+ [61] 3.755499e-03 3.576989e-03 3.064054e-03 3.097948e-03 2.813235e-03 2.413281e-03
+ [67] 2.227992e-03 2.677657e-03 2.472031e-03 2.300300e-03 2.304819e-03 2.372608e-03
+ [73] 2.458474e-03 2.124049e-03 2.117270e-03 2.261886e-03 2.038183e-03 1.956837e-03
+ [79] 2.139866e-03 1.898086e-03 1.965875e-03 1.744432e-03 1.843855e-03 1.701499e-03
+ [85] 1.807701e-03 1.638229e-03 1.635970e-03 1.394190e-03 1.355776e-03 1.434863e-03
+ [91] 1.484575e-03 1.541065e-03 1.493613e-03 1.355776e-03 1.376113e-03 1.328660e-03
+ [97] 1.260872e-03 1.220198e-03 1.134333e-03 1.107217e-03 1.224718e-03 1.064284e-03
+[103] 1.229237e-03 9.603413e-04 9.038506e-04 1.052986e-03 1.145631e-03 8.451003e-04
+[109] 8.654370e-04 8.202444e-04 8.473600e-04 8.925525e-04 9.128891e-04 7.230805e-04
+[115] 7.614942e-04 8.676966e-04 6.982246e-04 7.547153e-04 6.733687e-04 6.507725e-04
+[121] 6.439936e-04 7.117824e-04 5.694259e-04 5.558681e-04 4.767812e-04 6.349551e-04
+[127] 4.587042e-04 3.976943e-04 4.925986e-04 4.315887e-04 4.428868e-04 3.773576e-04
+[133] 3.954347e-04 3.253862e-04 3.457229e-04 3.186073e-04 2.801937e-04 4.225502e-04
+[139] 4.022135e-04 3.976943e-04 2.960111e-04 2.282223e-04 3.570210e-04 3.479825e-04
+[145] 2.485589e-04 2.666359e-04 2.350012e-04 2.350012e-04 2.960111e-04 1.852894e-04
+[151] 2.621167e-04 2.666359e-04 2.078856e-04 1.423565e-04 1.536546e-04 2.169242e-04
+[157] 7.004842e-05 9.942357e-05 1.242795e-04 1.107217e-04 8.812544e-05 3.389440e-05
+[163] 4.067328e-05 4.971178e-05 1.581739e-05 2.485589e-05 4.519253e-05 5.649066e-05
+[169] 5.875029e-05 7.456768e-05 3.841365e-05 6.100992e-05 6.326954e-05 2.259627e-05
+[175] 1.129813e-05 1.355776e-05 1.581739e-05 4.519253e-06 1.807701e-05 4.519253e-06
+[181] 0.000000e+00 2.259627e-06 4.519253e-06 2.259627e-06 4.519253e-06 0.000000e+00
+[187] 9.038506e-06 6.778880e-06 1.129813e-05 2.259627e-06 2.033664e-05 4.519253e-06
+[193] 9.038506e-06 1.129813e-05 4.519253e-06 1.129813e-05 2.485589e-05 6.778880e-06
+[199] 2.259627e-06 0.000000e+00 0.000000e+00 1.581739e-05 1.355776e-05 9.038506e-06
+[205] 1.355776e-05 2.259627e-06 6.778880e-06 0.000000e+00 4.519253e-06 1.581739e-05
+[211] 6.778880e-06 6.778880e-06 9.038506e-06 1.129813e-05 0.000000e+00 0.000000e+00
+[217] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+[223] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+[229] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+[235] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+[241] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+[247] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+[253] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+[259] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+[265] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+[271] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+[277] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+[283] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+[289] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+[295] 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00
+> plot(h[1,])
+> plot(h[1,],type='l')
+> plot(h[5,],type='l')
+> lines(h[4,]*exp((1:300-0.5)/2),col=2)
+> plot(h[5,],type='l')
+> x = h[4,]*exp((1:300-0.5)/2)
+> lines(x/sum(x),col=2)
+> 
+> x = h[4,]*exp((1:300-0.5)/8 )
+> y = h[5,]*exp((1:300-0.5)/16)
+> plot(x/sum(x),type='l')
+> lines(y/sum(y),col=2)
+> 
+> x = h[7,]*exp((1:300-0.5)/64 )
+> y = h[8,]*exp((1:300-0.5)/128)
+> plot(x/sum(x),type='l')
+> lines(y/sum(y),col=2)
+> 
+> x = h[6,]*exp((1:300-0.5)/32 )
+> y = h[7,]*exp((1:300-0.5)/64)
+> plot(x/sum(x),type='l')
+> lines(y/sum(y),col=2)
+> 
+> par(mfwor=c(2,5))
+Warning message:
+In par(mfwor = c(2, 5)) : "mfwor" is not a graphical parameter
+> for(i in 1:11) {
++ 	x = h[i  ,]*exp((1:300-0.5)/ )
+Error: unexpected ')' in:
+"for(i in 1:11) {
+        x = h[i  ,]*exp((1:300-0.5)/ )"
+> 	y = h[i+1,]*exp((1:300-0.5)/2)
+Error: subscript out of bounds
+> 	plot(x/sum(x),type='l')
+> 	lines(y/sum(y),col=2)
+> }
+Error: unexpected '}' in "}"
+> 
+> par(mfrow=c(2,5))
+> for(i in (1:11)) {
++ 	x = h[i  ,]*exp((1:300-0.5)/ )
+Error: unexpected ')' in:
+"for(i in (1:11)) {
+        x = h[i  ,]*exp((1:300-0.5)/ )"
+> 	y = h[i+1,]*exp((1:300-0.5)/2)
+Error: subscript out of bounds
+> 	plot(x/sum(x),type='l')
+> 	lines(y/sum(y),col=2)
+> }
+Error: unexpected '}' in "}"
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> par(mfrow=c(2,5))
+> for(i in (1:11)) {
++ 	x = h[i  ,]*exp((1:300-0.5)/ )
+Error: unexpected ')' in:
+"for(i in (1:11)) {
+        x = h[i  ,]*exp((1:300-0.5)/ )"
+> 	y = h[i+1,]*exp((1:300-0.5)/2)
+Error: subscript out of bounds
+> 	plot(x/sum(x),type='l')
+> 	lines(y/sum(y),col=2)
+> }
+Error: unexpected '}' in "}"
+> 
+> par(mfrow=c(2,5))
+> for(i in (1:11)) {
++ 	x = h[i  ,]*exp((1:300-0.5)/1)
++ 	y = h[i+1,]*exp((1:300-0.5)/2)
++ 	plot(x/sum(x),type='l')
++ 	lines(y/sum(y),col=2)
++ }
+Error: subscript out of bounds
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> par(mfrow=c(2,5))
+> for(i in (1:11)) {
++ 	x = h[i  ,]*exp((1:300-0.5)/1)
++ 	y = h[i+1,]*exp((1:300-0.5)/2)
++ 	plot(x/sum(x),type='l')
++ 	lines(y/sum(y),col=2)
++ }
+Error: subscript out of bounds
+> 
+> par(mfrow=c(5,2),mar=c(0,0,0,0))
+> for(i in (1:10)) {
++ 	x = h[i  ,]*exp((1:300-0.5)/1)
++ 	y = h[i+1,]*exp((1:300-0.5)/2)
++ 	plot(x/sum(x),type='l',axes=F)
++ 	lines(y/sum(y),col=2)
++ }
+> 
+> 
+> par(mfrow=c(5,2),mar=c(0,0,0,0))
+> for(i in (1:10)) {
++ 	x = h[i  ,]*exp((1:300-0.5)/exp(i-1))
++ 	y = h[i+1,]*exp((1:300-0.5)/exp(i  ))
++ 	plot(x/sum(x),type='l',axes=F)
++ 	lines(y/sum(y),col=2)
++ }
+> 
+> par(mfrow=c(5,2),mar=c(0,0,0,0))
+> for(i in (1:10)) {
++ 	x = h[i  ,]*exp((1:300)/exp(i-1))
++ 	y = h[i+1,]*exp((1:300)/exp(i  ))
++ 	plot(x/sum(x),type='l',axes=F)
++ 	lines(y/sum(y),col=2)
++ }
+> 
+> par(mfrow=c(5,2),mar=c(0,0,0,0))
+> for(i in (1:10)) {
++ 	x = h[i  ,]*exp((1:300)/exp(i-1))
++ 	y = h[i+1,]*exp((1:300)/exp(i  ))
++ 	plot(x/sum(x),type='l',axes=F,main=paste(1,1+1))
++ 	lines(y/sum(y),col=2)
++ }
+> 
+> par(mfrow=c(5,2),mar=c(0,0,1,0))
+> for(i in (1:10)) {
++ 	x = h[i  ,]*exp((1:300)/exp(i-1))
++ 	y = h[i+1,]*exp((1:300)/exp(i  ))
++ 	plot(x/sum(x),type='l',axes=F,main=paste(i,i+1))
++ 	lines(y/sum(y),col=2)
++ }
+> 
+> par(mfrow=c(5,2),mar=c(0,0,1,0))
+> for(i in (1:10)) {
++ 	x = h[i  ,]*exp((1:300)/exp2(i-1))
++ 	y = h[i+1,]*exp((1:300)/exp2(i  ))
++ 	plot(x/sum(x),type='l',axes=F,main=paste(i,i+1))
++ 	lines(y/sum(y),col=2)
++ }
+Error: could not find function "exp2"
+> 
+> par(mfrow=c(5,2),mar=c(0,0,1,0))
+> for(i in (1:10)) {
++ 	x = h[i  ,]*exp((1:300)/2**(i-1))
++ 	y = h[i+1,]*exp((1:300)/2**(i  ))
++ 	plot(x/sum(x),type='l',axes=F,main=paste(i,i+1))
++ 	lines(y/sum(y),col=2)
++ }
+> 
+> 
+> h = array(0,c(32,300))
+> for(i in 16:32) {
++ 		tmp = read.table(paste("~/project/protoprot/ligh2t/test/hist_27_27_",i,"_480000.dat",sep=""))[[1]]
++ 		tmp = tmp * exp((1:300-0.5)/i)
++ 		h[log2(i)+1,] = tmp / sum(tmp)
++ }
+> 
+> par(mfrow=c(17,17),mar=c(0,0,1,0))
+> for(i in 16:32) {
++ for(j in 16:32) {
++ 	x = h[i,]
++ 	y = h[j,]
++ 	plot(x/sum(x),type='l',axes=F,main=paste(i,j))
++ 	lines(y/sum(y),col=2)
++ }
++ 
++ 
++ 
++ }
+Error in plot.window(...) : need finite 'ylim' values
+In addition: Warning messages:
+1: In min(x) : no non-missing arguments to min; returning Inf
+2: In max(x) : no non-missing arguments to max; returning -Inf
+> par(mfrow=c(17,17),mar=c(0,0,1,0))
+> for(i in 16:32) {
++ for(j in 16:32) {
++ 	x = h[i,]
++ 	y = h[j,]
++ 	plot( x,type='l',axes=F,main=paste(i,j))
++ 	lines(y,col=2)
++ }
++ }
+> 
+> 
+> h = array(0,c(32,300))
+> for(i in 16:32) {
++ 		tmp = read.table(paste("~/project/protoprot/ligh2t/test/hist_27_27_",i,"_480000.dat",sep=""))[[1]]
++ 		tmp = tmp * exp((1:300-0.5)/i)
++ 		h[i,] = tmp / sum(tmp)
++ }
+> 
+> par(mfrow=c(17,17),mar=c(0,0,1,0))
+> for(i in 16:32) {
++ for(j in 16:32) {
++ 	x = h[i,]
++ 	y = h[j,]
++ 	plot( x,type='l',axes=F,main=paste(i,j))
++ 	lines(y,col=2)
++ }
++ }
+> 
+> par(mfrow=c(4,4),mar=c(0,0,1,0))
+> for(i in 16:31) {
++ 	j = i+1
++ 	x = h[i,]
++ 	y = h[j,]
++ 	plot( x,type='l',axes=F,main=paste(i,j))
++ 	lines(y,col=2)
++ }
+> 
+> 
+> h16 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_16_480000.dat"))[[1]]
+Error: unexpected ')' in "h16 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_16_480000.dat"))"
+> h17 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_17_480000.dat"))[[1]]
+Error: unexpected ')' in "h17 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_17_480000.dat"))"
+> h31 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_31_480000.dat"))[[1]]
+Error: unexpected ')' in "h31 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_31_480000.dat"))"
+> h32 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_32_480000.dat"))[[1]]
+Error: unexpected ')' in "h32 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_32_480000.dat"))"
+> h16 = h16 * exp((1:300-0.5)/16)
+Error: object 'h16' not found
+> h17 = h17 * exp((1:300-0.5)/17)
+Error: object 'h17' not found
+> h31 = h31 * exp((1:300-0.5)/31)
+Error: object 'h31' not found
+> h32 = h32 * exp((1:300-0.5)/32)
+Error: object 'h32' not found
+> h16 = h16/sum(h16)
+Error: object 'h16' not found
+> h17 = h17/sum(h17)
+Error: object 'h17' not found
+> h31 = h31/sum(h31)
+Error: object 'h31' not found
+> h32 = h32/sum(h32)
+Error: object 'h32' not found
+> plot(h16)
+Error in plot(h16) : object 'h16' not found
+> lines(h17,col=2)
+Error in lines(h17, col = 2) : object 'h17' not found
+> 
+> h16 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_16_4800000.dat"))[[1]]
+Error: unexpected ')' in "h16 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_16_4800000.dat"))"
+> h17 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_17_4800000.dat"))[[1]]
+Error: unexpected ')' in "h17 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_17_4800000.dat"))"
+> h31 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_31_4800000.dat"))[[1]]
+Error: unexpected ')' in "h31 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_31_4800000.dat"))"
+> h32 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_32_4800000.dat"))[[1]]
+Error: unexpected ')' in "h32 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_32_4800000.dat"))"
+> h16 = h16 * exp((1:300-0.5)/16)
+Error: object 'h16' not found
+> h17 = h17 * exp((1:300-0.5)/17)
+Error: object 'h17' not found
+> h31 = h31 * exp((1:300-0.5)/31)
+Error: object 'h31' not found
+> h32 = h32 * exp((1:300-0.5)/32)
+Error: object 'h32' not found
+> h16 = h16/sum(h16)
+Error: object 'h16' not found
+> h17 = h17/sum(h17)
+Error: object 'h17' not found
+> h31 = h31/sum(h31)
+Error: object 'h31' not found
+> h32 = h32/sum(h32)
+Error: object 'h32' not found
+> plot(h16)
+Error in plot(h16) : object 'h16' not found
+> lines(h17,col=2)
+Error in lines(h17, col = 2) : object 'h17' not found
+> 
+> 
+> 
+> h16 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_16_4800000.dat"))[[1]]
+Error: unexpected ')' in "h16 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_16_4800000.dat"))"
+> 
+> h16 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_16_4800000.dat")[[1]]
+> h17 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_17_4800000.dat")[[1]]
+> h31 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_31_4800000.dat")[[1]]
+> h32 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_32_4800000.dat")[[1]]
+> h16 = h16 * exp((1:300-0.5)/16)
+> h17 = h17 * exp((1:300-0.5)/17)
+> h31 = h31 * exp((1:300-0.5)/31)
+> h32 = h32 * exp((1:300-0.5)/32)
+> h16 = h16/sum(h16)
+> h17 = h17/sum(h17)
+> h31 = h31/sum(h31)
+> h32 = h32/sum(h32)
+> plot(h16)
+> lines(h17,col=2)
+> 
+> 
+> par(mfrow=c(1,1))
+> h16 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_16_4800000.dat")[[1]]
+> h17 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_17_4800000.dat")[[1]]
+> h31 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_31_4800000.dat")[[1]]
+> h32 = read.table("~/project/protoprot/ligh2t/test/hist_27_27_32_4800000.dat")[[1]]
+> h16 = h16 * exp((1:300-0.5)/16)
+> h17 = h17 * exp((1:300-0.5)/17)
+> h31 = h31 * exp((1:300-0.5)/31)
+> h32 = h32 * exp((1:300-0.5)/32)
+> h16 = h16/sum(h16)
+> h17 = h17/sum(h17)
+> h31 = h31/sum(h31)
+> h32 = h32/sum(h32)
+> plot(h16)
+> lines(h17,col=2)
+> 
+> 
+> plot(h16,type='l')
+> lines(h17,col=2)
+> 
+> 
+> 
+> h16a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_16_4800000.dat")[[1]]
+> h17a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_17_4800000.dat")[[1]]
+> h31a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_31_4800000.dat")[[1]]
+> h32a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_32_4800000.dat")[[1]]
+> h16a = h16 * exp((1:300-0.5)/16)
+> h17a = h17 * exp((1:300-0.5)/17)
+> h31a = h31 * exp((1:300-0.5)/31)
+> h32a = h32 * exp((1:300-0.5)/32)
+> h16a = h16/sum(h16)
+> h17a = h17/sum(h17)
+> h31a = h31/sum(h31)
+> h32a = h32/sum(h32)
+> h16b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_16_4800000.dat")[[1]]
+> h17b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_17_4800000.dat")[[1]]
+> h31b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_31_4800000.dat")[[1]]
+> h32b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_32_4800000.dat")[[1]]
+> h16b = h16 * exp((1:300-0.5)/16)
+> h17b = h17 * exp((1:300-0.5)/17)
+> h31b = h31 * exp((1:300-0.5)/31)
+> h32b = h32 * exp((1:300-0.5)/32)
+> h16b = h16/sum(h16)
+> h17b = h17/sum(h17)
+> h31b = h31/sum(h31)
+> h32b = h32/sum(h32)
+> plot(h16a,type='l')
+> lines(h16b,col=2)
+> 
+> h16a[100]
+[1] 0.001906738
+> h16b[100]
+[1] 0.001906738
+> rm(h16)
+> rm(h17)
+> rm(h31)
+> rm(h32)
+> h16a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_16_4800000.dat")[[1]]
+> h17a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_17_4800000.dat")[[1]]
+> h31a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_31_4800000.dat")[[1]]
+> h32a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_32_4800000.dat")[[1]]
+> h16a = h16a * exp((1:300-0.5)/16)
+> h17a = h17a * exp((1:300-0.5)/17)
+> h31a = h31a * exp((1:300-0.5)/31)
+> h32a = h32a * exp((1:300-0.5)/32)
+> h16a = h16a/sum(h16)
+Error: object 'h16' not found
+> h17a = h17a/sum(h17)
+Error: object 'h17' not found
+> h31a = h31a/sum(h31)
+Error: object 'h31' not found
+> h32a = h32a/sum(h32)
+Error: object 'h32' not found
+> h16b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_16_4800000.dat")[[1]]
+> h17b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_17_4800000.dat")[[1]]
+> h31b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_31_4800000.dat")[[1]]
+> h32b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_32_4800000.dat")[[1]]
+> h16b = h16b * exp((1:300-0.5)/16)
+> h17b = h17b * exp((1:300-0.5)/17)
+> h31b = h31b * exp((1:300-0.5)/31)
+> h32b = h32b * exp((1:300-0.5)/32)
+> h16b = h16b/sum(h16)
+Error: object 'h16' not found
+> h17b = h17b/sum(h17)
+Error: object 'h17' not found
+> h31b = h31b/sum(h31)
+Error: object 'h31' not found
+> h32b = h32b/sum(h32)
+Error: object 'h32' not found
+> plot(h16a,type='l')
+> lines(h16b,col=2)
+> 
+> h16a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_16_4800000.dat")[[1]]
+> h17a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_17_4800000.dat")[[1]]
+> h31a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_31_4800000.dat")[[1]]
+> h32a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_32_4800000.dat")[[1]]
+> h16a = h16a * exp((1:300-0.5)/16)
+> h17a = h17a * exp((1:300-0.5)/17)
+> h31a = h31a * exp((1:300-0.5)/31)
+> h32a = h32a * exp((1:300-0.5)/32)
+> h16a = h16a/sum(h16a)
+> h17a = h17a/sum(h17a)
+> h31a = h31a/sum(h31a)
+> h32a = h32a/sum(h32a)
+> h16b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_16_4800000.dat")[[1]]
+> h17b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_17_4800000.dat")[[1]]
+> h31b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_31_4800000.dat")[[1]]
+> h32b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_32_4800000.dat")[[1]]
+> h16b = h16b * exp((1:300-0.5)/16)
+> h17b = h17b * exp((1:300-0.5)/17)
+> h31b = h31b * exp((1:300-0.5)/31)
+> h32b = h32b * exp((1:300-0.5)/32)
+> h16b = h16b/sum(h16b)
+> h17b = h17b/sum(h17b)
+> h31b = h31b/sum(h31b)
+> h32b = h32b/sum(h32b)
+> plot(h16a,type='l')
+> lines(h16b,col=2)
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> h16a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_16_4800000.dat")[[1]]
+> h17a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_17_4800000.dat")[[1]]
+> h31a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_31_4800000.dat")[[1]]
+> h32a = read.table("~/project/protoprot/ligh2t/test/16173132/A/hist_27_27_32_4800000.dat")[[1]]
+> h16a = h16a * exp((1:300-0.5)/16)
+> h17a = h17a * exp((1:300-0.5)/17)
+> h31a = h31a * exp((1:300-0.5)/31)
+> h32a = h32a * exp((1:300-0.5)/32)
+> h16a = h16a/sum(h16a)
+> h17a = h17a/sum(h17a)
+> h31a = h31a/sum(h31a)
+> h32a = h32a/sum(h32a)
+> h16b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_16_4800000.dat")[[1]]
+> h17b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_17_4800000.dat")[[1]]
+> h31b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_31_4800000.dat")[[1]]
+> h32b = read.table("~/project/protoprot/ligh2t/test/16173132/B/hist_27_27_32_4800000.dat")[[1]]
+> h16b = h16b * exp((1:300-0.5)/16)
+> h17b = h17b * exp((1:300-0.5)/17)
+> h31b = h31b * exp((1:300-0.5)/31)
+> h32b = h32b * exp((1:300-0.5)/32)
+> h16b = h16b/sum(h16b)
+> h17b = h17b/sum(h17b)
+> h31b = h31b/sum(h31b)
+> h32b = h32b/sum(h32b)
+> plot(h16a,type='l')
+> lines(h16b,col=2)
+> 
+> plot (h16a,type='l')
+> lines(h17a,col=2)
+> 
+> plot (h16a,type='l')
+> lines(h16b,col=1)
+> lines(h17a,col=2)
+> lines(h17b,col=2)
+> 
+> 
+> plot (h16a,type='l')
+> lines(h16b,col=1)
+> lines(h17a,col="gray")
+> lines(h17b,col="pink")
+> 
+> plot (h31a,type='l')
+> lines(h31b,col=1)
+> lines(h32a,col="gray")
+> lines(h32b,col="pink")
+> 
+> plot (h31a,type='l')
+> lines(h31b,col="gray")
+> lines(h32a,col="red")
+> lines(h32b,col="pink")
+> 
+> plot (h31a,col=1,lty=1,type='l')
+> lines(h31b,col=1,lty=3)
+> lines(h32a,col=2,lty=1)
+> lines(h32b,col=2,lty=3)
+> 
+> plot (h16a,col=1,lty=1,type='l')
+> lines(h16b,col=1,lty=3)
+> lines(h17a,col=2,lty=1)
+> lines(h17b,col=2,lty=3)
+> 
+> TEMP = c(5,10,15,20,30,40,50,999999999)
+> h = array(0,c(length(TEMP),300))
+> for(i in 1:length(TEMP)) {
++ 	x = read.table(paste("~/project/protoprot/ligh2t/test/hist_27_27_",TEMP[i],"_48000000.dat",sep=""))[[1]]
++ 	x = x * exp((1:300-0.5)/TEMP[i])
++ 	h[i,] = x/sum(x)
++ }
+> 
+> plot(h[8,],type='l')
+> lines(h[7,],col=2)
+> lines(h[6,],col=2)
+> lines(h[5,],col=2)
+> lines(h[4,],col=2)
+> lines(h[3,],col=2)
+> lines(h[2,],col=2)
+> lines(h[1,],col=2)
+> lines(h[4,],col=2,lwd=3)
+> lines(h[3,],col=4,lwd=3)
+> 15000000/24/2000
+[1] 312.5
+> 15000000/24/2000par(mfrow=c(4,2),mar=c(0,0,1,0))
+Error: unexpected symbol in "15000000/24/2000par"
+> for(i in 1:(length(TEMP)-1)) {
++ 	plot(h[length(TEMP),],type='l')
++ 	lines(h[i,],col=2)
++ }
+> 
+> par(mfrow=c(4,2),mar=c(0,0,1,0))
+> for(i in 1:(length(TEMP)-1)) {
++ 	plot(h[length(TEMP),],type='l')
++ 	lines(h[i,],col=2)
++ }
+> 
+> par(mfrow=c(4,2),mar=c(0,0,1,0))
+> for(i in 1:(length(TEMP)-1)) {
++ 	plot(h[length(TEMP),],type='l',main=paste("temp",TEMP[i]))
++ 	lines(h[i,],col=2)
++ }
+> 
+> par(mfrow=c(4,2),mar=c(0,0,1,0))
+> for(i in 1:(length(TEMP)-1)) {
++ 	plot(h[length(TEMP),],type='l')
++ 	lines(h[i,],col=2)
++ 	text(paste("temp",TEMP[i]))
++ }
+Warning messages:
+1: In xy.coords(x, y, recycle = TRUE) : NAs introduced by coercion
+2: In xy.coords(x, y, recycle = TRUE) : NAs introduced by coercion
+3: In xy.coords(x, y, recycle = TRUE) : NAs introduced by coercion
+4: In xy.coords(x, y, recycle = TRUE) : NAs introduced by coercion
+5: In xy.coords(x, y, recycle = TRUE) : NAs introduced by coercion
+6: In xy.coords(x, y, recycle = TRUE) : NAs introduced by coercion
+7: In xy.coords(x, y, recycle = TRUE) : NAs introduced by coercion
+> 
+> par(mfrow=c(4,2),mar=c(0,0,1,0))
+> for(i in 1:(length(TEMP)-1)) {
++ 	plot(h[length(TEMP),],type='l')
++ 	lines(h[i,],col=2)
++ 	text(1,0.001,paste("temp",TEMP[i]))
++ }
+> 
+> par(mfrow=c(4,2),mar=c(0,0,1,0))
+> for(i in 1:(length(TEMP)-1)) {
++ 	plot(h[length(TEMP),],type='l',ylim=c(0,0.01))
++ 	lines(h[i,],col=2)
++ 	text(1,0.008,paste("temp",TEMP[i]))
++ }
+> 
+> par(mfrow=c(4,2),mar=c(0,0,1,0))
+> for(i in 1:(length(TEMP)-1)) {
++ 	plot(h[length(TEMP),],type='l',ylim=c(0,0.01))
++ 	lines(h[i,],col=2)
++ 	text(50,0.008,paste("temp",TEMP[i]))
++ }
+> 
+> par(mfrow=c(4,2),mar=c(0,0,1,0))
+> for(i in 1:(length(TEMP)-1)) {
++ 	plot(h[length(TEMP),],type='l',ylim=c(0,0.01))
++ 	lines(h[i,],col=2)
++ 	text(30,0.008,paste("temp",TEMP[i]),cex=2)
++ }
+> 
+> par(mfrow=c(4,2),mar=c(0,0,1,0))
+> for(i in 1:(length(TEMP)-1)) {
++ 	plot(h[length(TEMP),],type='l',ylim=c(0,0.01),axes=F)
++ 	lines(h[i,],col=2)
++ 	text(30,0.008,paste("temp",TEMP[i]),cex=2)
++ }
+> 
+> par(mfrow=c(4,2),mar=c(0,0,1,0))
+> for(i in 1:(length(TEMP)-1)) {
++ 	plot(h[length(TEMP),],type='l',ylim=c(0,0.01),xlab=NA,ylab=NA)
++ 	lines(h[i,],col=2)
++ 	text(30,0.008,paste("temp",TEMP[i]),cex=2)
++ }
+> 
+> par(mfrow=c(4,2),mar=c(0,0,1,0))
+> for(i in 1:(length(TEMP)-1)) {
++ 	plot(h[length(TEMP),],type='l',ylim=c(0,0.02),xlab=NA,ylab=NA)
++ 	lines(h[i,],col=2)
++ 	text(30,0.008,paste("temp",TEMP[i]),cex=2)
++ }
+> 
+> 
+> par(mfrow=c(4,2),mar=c(0,0,1,0))
+> for(i in 1:(length(TEMP)-1)) {
++ 	plot(h[length(TEMP),],type='l',ylim=c(0,0.02),xlab=NA,ylab=NA)
++ 	lines(h[i,],col=2)
++ 	text(30,0.017,paste("temp",TEMP[i]),cex=2)
++ }
+> 
+> par(mfrow=c(1,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',ylim=c(0,0.02),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(h[3,],col=2)
+> text(30,0.017,paste("temp",TEMP[i]),cex=2)
+> 
+> par(mfrow=c(1,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',main="temperature = 15",ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(h[3,],col=2)
+> 
+> par(mfrow=c(2,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',main="temperature = 15",ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(h[3,],col=2)
+> 
+> plot(h[length(TEMP),],type='l',main="temperature = 15",xlim=c(0,20),ylim=c(0,0.00012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(h[3,],col=2)
+> 
+> plot(h[length(TEMP),],type='l',main="temperature = 15",xlim=c(0,20),ylim=c(0,0.0000012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(h[3,],col=2)
+> 
+> par(mfrow=c(2,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',main="temperature = 15",ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(h[3,],col=2)
+> 
+> TEMP = c(5,10,15,20,30,40,50,999999999)
+> h = array(0,c(length(TEMP),300))
+> hraw = array(0,c(length(TEMP),300))
+> for(i in 1:length(TEMP)) {
++ 	x = read.table(paste("~/project/protoprot/ligh2t/test/hist_27_27_",TEMP[i],"_48000000.dat",sep=""))[[1]]
++ 	hraw[i,] = x
++ 	x = x * exp((1:300-0.5)/TEMP[i])
++ 	h[i,] = x/sum(x)
++ }
+> 
+> par(mfrow=c(2,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',main="corrected, temperature = 15",ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(h[3,],col=2)
+> 
+> plot(hraw[length(TEMP),],type='l',main="raw, temperature = 15",xlim=c(0,20),ylim=c(0,0.0000012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(hraw[3,],col=2)
+> 
+> for(i in 1:length(TEMP)) {
++ 	x = read.table(paste("~/project/protoprot/ligh2t/test/hist_27_27_",TEMP[i],"_48000000.dat",sep=""))[[1]]
++ 	hraw[i,] = x/sum(x)
++ 	x = x * exp((1:300-0.5)/TEMP[i])
++ 	h[i,] = x/sum(x)
++ }
+> 
+> plot(0)
+> plot(0)
+> par(mfrow=c(2,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',main="corrected, temperature = 15",ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(h[3,],col=2)
+> 
+> plot(hraw[length(TEMP),],type='l',main="raw, temperature = 15",xlim=c(0,20),ylim=c(0,0.0000012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(hraw[3,],col=2)
+> 
+> 
+> plot(hraw[length(TEMP),],type='l',main="raw, temperature = 15",xlim=c(0,25),ylim=c(0,0.00012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(hraw[3,],col=2)
+> 
+> plot(hraw[length(TEMP),],type='l',main="raw, temperature = 15",xlim=c(0,25),ylim=c(0,0.0012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(hraw[3,],col=2)
+> 
+> plot(hraw[length(TEMP),],type='l',main="raw, temperature = 15",xlim=c(0,25),ylim=c(0,0.0016),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(hraw[3,],col=2)
+> 
+> par(mfrow=c(2,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',main="corrected, temperature = 15",ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(h[3,],col=2)
+> 
+> plot(hraw[length(TEMP),],type='l',main="raw, temperature = 15",xlim=c(10,20),ylim=c(0,0.0016),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(hraw[3,],col=2)
+> 
+> par(mfrow=c(2,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',main="corrected, temperature = 15",ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(h[3,],col=2)
+> 
+> plot(hraw[length(TEMP),],type='l',main="raw, temperature = 15",xlim=c(10,20),ylim=c(0,0.0006),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(hraw[3,],col=2)
+> 
+> par(mfrow=c(2,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',main="corrected, temperature = 15",ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(h[3,],col=2)
+> 
+> plot(hraw[length(TEMP),],type='l',main="raw, temperature = 15",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(hraw[3,],col=2)
+> 
+> legend(c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
+Error in as.graphicsAnnot(legend) : 
+  argument "legend" is missing, with no default
+> 
+> par(mfrow=c(2,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',main="corrected, temperature = 15",ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(h[3,],col=2)
+> legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
+> 
+> par(mfrow=c(2,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',main="corrected, temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(h[3,],col=2)
+> legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
+> 
+> plot(hraw[length(TEMP),],type='l',main="raw, temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency")
+> lines(hraw[3,],col=2)
+> 
+> par(mfrow=c(2,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',main="corrected, temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
+> lines(h[3,],col=2,lwd=2)
+> legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
+> 
+> plot(hraw[length(TEMP),],type='l',main="raw, temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
+> lines(hraw[3,],col=2,lwd=2)
+> legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
+> 
+> lines(c(10,10),c(0,0.002),col=4)
+> 
+> par(mfrow=c(2,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
+> lines(h[3,],col=2,lwd=2)
+> legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
+> lines(c(10,10),c(0,0.002),col=4)
+> lines(c(20,20),c(0,0.002),col=4)
+> 
+> plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
+> lines(hraw[3,],col=2,lwd=2)
+> legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
+> 
+> par(mfrow=c(2,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
+> lines(h[3,],col=2,lwd=2)
+> legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
+> lines(c(10,10),c(0,0.001),col=4)
+> lines(c(20,20),c(0,0.001),col=4)
+> text(10,0.0011,"lower plot range")
+> 
+> plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
+> lines(hraw[3,],col=2,lwd=2)
+> legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
+> 
+> par(mfrow=c(2,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
+> lines(h[3,],col=2,lwd=2)
+> legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
+> lines(c(10,10),c(0,0.001),col=4)
+> lines(c(20,20),c(0,0.001),col=4)
+> text(40,0.0015,"lower plot range",col=4)
+> 
+> plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
+> lines(hraw[3,],col=2,lwd=2)
+> legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
+> 
+> 
+> par(mfrow=c(2,1),mar=c(2,2,2,1))
+> plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
+> lines(h[3,],col=2,lwd=2)
+> legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
+> lines(c(10,10),c(0,0.001),col=4)
+> lines(c(20,20),c(0,0.001),col=4)
+> text(15,0.0015,"lower plot range",col=4,cex=0.7)
+> 
+> plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
+> lines(hraw[3,],col=2,lwd=2)
+> legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
+> 
+> 
+> lines(c(10,10),c(0,0.001),col=4)
+> lines(c(20,20),c(0,0.001),col=4)
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.00001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ }	
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.0001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ }	
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.00026),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ }	
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.00031),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ }	
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.00034),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ }	
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.000315),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ }	
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.000316),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ }	
+> 
+> hraw[8,20]
+[1] 3.192892e-06
+> hraw[3,30]/hraw[8,20]
+[1] 1262.888
+> hraw[3,20]/hraw[8,20]
+[1] 112.2529
+> hraw[3,15]/hraw[8,15]
+[1] 109.8598
+> hraw[3,20]/hraw[8,20]
+[1] 112.2529
+> sum(hraw[3,1:20])/sum(hraw[8,1:20])
+[1] 102.0106
+> text(19,0.0001,"100X more sampling")
+> text(18.7,0.0003,"100X more sampling")
+> text(18.7,0.0004,"100X more sampling")
+> text(18.7,0.00038,"100X more sampling")
+> text(18.7,0.00037,"100X more sampling")
+> text(18.7,0.00037,"overall distribution identical")
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ text(18.7,0.008,"overall distribution identical")
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.000316),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ }
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ text(18.7,0.008,"overall distribution identical")
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.000316),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ }
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ text(200,0.008,"overall distribution identical")
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.000316),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ }
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ text(220,0.008,"overall distribution identical")
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.000316),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ }
+> 
+> text(18.7,0.00037,"100X more sampling")
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ text(220,0.008,"overall distribution identical")
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.000316),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ }
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ text(220,0.008,"overall distribution identical")
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.000316),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(17,0.00037,"100X more sampling\nat close contact")
++ }
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ text(220,0.008,"overall distribution identical")
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.000316),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(18.5,0.00037,"100X more sampling\nat close contact")
++ }
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ text(220,0.008,"overall distribution identical")
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.000316),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(18.3,0.00030,"100X more sampling\nat close contact")
++ }
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ text(220,0.008,"overall distribution identical")
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.000316),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(18.3,0.00033,"100X more sampling\nat close contact")
++ }
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ text(220,0.008,"overall distribution identical")
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.000316),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(18.3,0.00036,"100X more sampling\nat close contact")
++ }
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ text(125,0.006,"overall distribution identical")
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.000316),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0002,"100X more sampling\nat close contact")
++ }
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ text(125,0.004,"overall distribution identical")
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.000316),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0002,"100X more sampling\nat close contact")
++ }
+> 
+> {
++ par(mfrow=c(2,1),mar=c(2,2,2,1))
++ plot(h[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(0,250),ylim=c(0,0.012),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(h[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.001),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0015,"lower plot range",col=4,cex=0.7)
++ text(115,0.004,"overall distribution identical")
++ 
++ plot(hraw[length(TEMP),],type='l',main="temperature = 15, linkers=27,27",xlim=c(10,20),ylim=c(0,0.0004),xlab="Hyd/Pet ET distance",ylab="Frequency",lwd=2)
++ lines(hraw[3,],col=2,lwd=2)
++ legend("topleft",c("Unbiased Sampling","Importance Sampling"),col=c(1,2),lwd=5)
++ lines(c(10,10),c(0,0.000316),col=4)
++ lines(c(20,20),c(0,0.001),col=4)
++ text(15,0.0002,"100X more sampling\nat close contact")
++ }
+> 
+> 
