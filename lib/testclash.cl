@@ -1,5 +1,5 @@
-#include <pyopencl-ranluxcl.cl>
 #include <cl/gpu_mat_vec.cl>
+#include <cl/my_ranlux.cl>
 
 #define GI get_global_id(1)
 #define LI get_local_id(0)
@@ -115,11 +115,13 @@ __kernel void my_test_kernel(
 	__local struct VEC lkh[nlkh],lkp[nlkp],psi_et,hyd_et,pet_et,hyd_cen,pet_cen;
 	__local struct XFORM xh,xp,xhr,move;
 	__local bool p_or_h,mc_fail;
-	__local float mc_rand,minz[LS],boltz,score,last_score;
+	__local float mc_rand,minz[LS],boltz,score,score_bind,last_score;
 	__local int clash,nlnk,idx,residx,failrun,status,samp_delay;
+    barrier(CLK_LOCAL_MEM_FENCE);
 	ONLY1 psi_et = vec(52.126627, 53.095875, 23.992003);
 	ONLY1 status = status_global[2*GI+0];
 	ONLY1 samp_delay= status_global[2*GI+1];
+    barrier(CLK_LOCAL_MEM_FENCE);
 	
 	if(status) { // continuing
 		for(size_t i=0; i<nlkh; i+=LS) if((i+LI)<nlkh) lkh[i+LI] = out[GI*ntot     +i+LI];
@@ -129,8 +131,11 @@ __kernel void my_test_kernel(
 		    xp = xout[3*GI+1];
 		}
 	} else { // initialize
+	    barrier(CLK_LOCAL_MEM_FENCE);
 		for(size_t i = 0; i < nlkh; i+=LS) if((i+LI)<nlkh) lkh[i+LI]=init_lkh[i+LI];
+	    barrier(CLK_LOCAL_MEM_FENCE);
 		for(size_t i = 0; i < nlkp; i+=LS) if((i+LI)<nlkp) lkp[i+LI]=init_lkp[i+LI];
+	    barrier(CLK_LOCAL_MEM_FENCE);
 		ONLY1 { 
 			myrand_init(GI+*python_seed,ranluxcltab);
 		    xh = multxx( stub(lkh[nlkh-3],lkh[nlkh-2],lkh[nlkh-1]) , hyd_stub );
@@ -153,13 +158,14 @@ __kernel void my_test_kernel(
     barrier(CLK_LOCAL_MEM_FENCE);
 
 	for(int ITER = 0; ITER < NGPUITER; ++ITER) { // main loop
+	    barrier(CLK_LOCAL_MEM_FENCE);
 		ONLY1 { // compute next move 
-	    	stat[nstat*GI+1] += ((status>100) ? 1 : 0);
-			samp_delay = (samp_delay > 100) ? -1 : samp_delay; // start recording
-			samp_delay = (   status < -100) ?  1 : samp_delay; // start delay count
-			samp_delay = (   status >  100) ?  0 : samp_delay; // null
-			status = (status < -100) ?  1 : status; // if 1000 nosample accepts, start sampling
-			status = (status >  100) ? -1 : status; // if 1000 sample fails in a row, stop sampling
+	    	stat[nstat*GI+1] += ((status>1000) ? 1 : 0);
+			samp_delay = (samp_delay > 1000) ? -1 : samp_delay; // start recording
+			samp_delay = (   status < -1000) ?  1 : samp_delay; // start delay count
+			samp_delay = (   status >  1000) ?  0 : samp_delay; // null
+			status = (status < -1000) ?  1 : status; // if 1000 nosample accepts, start sampling
+			status = (status >  1000) ? -1 : status; // if 1000 sample fails in a row, stop sampling
 			float4 rand = myrand(ranluxcltab);
 			p_or_h = rand.x < 0.5; 
 			mc_rand = rand.x*2.0; // discard used 2
@@ -182,7 +188,9 @@ __kernel void my_test_kernel(
 		}
 
 		ONLY1 score = native_sqrt(dist2v(hyd_et,pet_et)); // monte-carlo
-		ONLY1 mc_fail = ((status>0) ? ( mc_rand > native_exp((last_score-score)/temperature) ) : false );
+		ONLY1 score_bind = score;//(score < 20) ? 5.0*score-80.0 : score; // monte-carlo
+		ONLY1 mc_fail = ((status>0) ? ( mc_rand > native_exp((last_score-score_bind)/temperature) ) : false );
+	    barrier(CLK_LOCAL_MEM_FENCE);
 		if(mc_fail) {
 			ONLY1 {
 				struct XFORM undo = xrev(move);
@@ -193,21 +201,24 @@ __kernel void my_test_kernel(
 			}
 			continue;
 		}
-
+		barrier(CLK_LOCAL_MEM_FENCE);
 		for(int i = idx+2; i < nlnk; i+=LS) { // xform linker coords 
 			if(LI+i < nlnk) (p_or_h?lkp:lkh)[LI+i] = multxv(move,(p_or_h?lkp:lkh)[LI+i]);
 		}
-
+		barrier(CLK_LOCAL_MEM_FENCE);
 		{ // clash check 
 			int rclash = false;			
 			minz[LI] = 9e9f;
 			if(p_or_h) {
 			    ONLY1 xp = multxx( stub(lkp[nlkp-3],lkp[nlkp-2],lkp[nlkp-1]) , pet_stub ); 			    
+				barrier(CLK_LOCAL_MEM_FENCE);
 				for(size_t i = 0; i < nlkp; i+=LS) if(i+LI < nlkp && lkp[i+LI].z < -3.0) rclash = true;
+				barrier(CLK_LOCAL_MEM_FENCE);
 				for(size_t i = 0; i < npet; i+=LS) minz[LI] = min( minz[LI], (i+LI<npet) ? multxv(xp,pet[i+LI]).z : 9e9f );
 				for(uint c=LS/2;c>0;c/=2) { barrier(CLK_LOCAL_MEM_FENCE); if(c>LI) minz[LI] = min(minz[LI],minz[LI+c]); }
 				barrier(CLK_LOCAL_MEM_FENCE);
 			  	if(minz[0] < -3.0) { ONLY1 clash=true; goto DONE_CLASH_CHECK; }
+				barrier(CLK_LOCAL_MEM_FENCE);
 			
 				for(size_t ip = 0; ip < nlkp; ip+=LS) {
 					if(ip+LI >= nlkp) break;
@@ -227,11 +238,13 @@ __kernel void my_test_kernel(
 						rclash |= ( dist2v(vp,lkp[ip2+4]) < 16.0 );
 					}
 				}
+				barrier(CLK_LOCAL_MEM_FENCE);
 				if(rclash) clash=true; if(clash) goto DONE_CLASH_CHECK;
 				// linkp vs psi
 				for(size_t ilp = 6; ilp < nlkp; ilp+=LS) {       // skip start of linkp vs. psi
 					rclash |= clash_check_psi( (ilp+LI<nlkp) ? lkp[ilp+LI] : vec(9e9,9e9,9e9) ,psi,psigrid);
 				}		
+				barrier(CLK_LOCAL_MEM_FENCE);
 				if(rclash) clash=true; if(clash) goto DONE_CLASH_CHECK;
 				// linkp vs hyd
 				for(size_t i = 0; i < nlkp; i+=LS) {       // skip start of linkp vs. psi
@@ -240,6 +253,7 @@ __kernel void my_test_kernel(
 				}		
 				if(rclash) clash=true; if(clash) goto DONE_CLASH_CHECK;
 				// linkp && linkh vs pet
+				barrier(CLK_LOCAL_MEM_FENCE);
 				for(size_t i = 0; i < npet; i+=LS) {
 					if( i+LI >= npet ) break;
 					struct VEC const v = multxv(xp,pet[i+LI]);
@@ -259,14 +273,17 @@ __kernel void my_test_kernel(
 					}
 					if(need_to_check_psi(v)) rclash |= clash_check_psi(v,psi,psigrid);						
 				}		
+				barrier(CLK_LOCAL_MEM_FENCE);
 				if(rclash) clash=true; if(clash) goto DONE_CLASH_CHECK;
 			} else {
 				ONLY1 xh = multxx( stub(lkh[nlkh-3],lkh[nlkh-2],lkh[nlkh-1]) , hyd_stub );				
+				barrier(CLK_LOCAL_MEM_FENCE);
 				for(size_t i = 0; i < nlkh; i+=LS) if(i+LI < nlkh && lkh[i+LI].z < -3.0) rclash = true;
 				for(size_t i = 0; i < nhyd; i+=LS) minz[LI] = min( minz[LI], (i+LI<nhyd) ? multxv(xh,hyd[i+LI]).z : 9e9f );
 				for(uint c=LS/2;c>0;c/=2) { barrier(CLK_LOCAL_MEM_FENCE); if(c>LI) minz[LI] = min(minz[LI],minz[LI+c]); }
 				barrier(CLK_LOCAL_MEM_FENCE);
 				if(minz[0] < -3.0) { ONLY1 clash=true; goto DONE_CLASH_CHECK; }
+				barrier(CLK_LOCAL_MEM_FENCE);
 
 				for(size_t ih = 0; ih < nlkh; ih+=LS) {
 					if(ih+LI >= nlkh) break;
@@ -286,6 +303,7 @@ __kernel void my_test_kernel(
 						rclash |= ( dist2v(vh,lkh[ih2+4]) < 16.0 );
 					}
 				}
+				barrier(CLK_LOCAL_MEM_FENCE);
 				if(rclash) clash=true; if(clash) goto DONE_CLASH_CHECK;
 				for(size_t ilh = 6; ilh < nlkh; ilh+=LS) {       // skip start of linkp vs. psi
 					rclash |= clash_check_psi( (ilh+LI<nlkh) ? lkh[ilh+LI] : vec(9e9,9e9,9e9) ,psi,psigrid);
@@ -306,6 +324,7 @@ __kernel void my_test_kernel(
 					struct VEC const v = multxv(xh,hyd[i+LI]);
 					if(need_to_check_psi(v)) rclash |= clash_check_psi(v,psi,psigrid);			
 				}				
+				barrier(CLK_LOCAL_MEM_FENCE);
 				if(rclash) clash=true; if(clash) goto DONE_CLASH_CHECK;
 				for(size_t i = 0; i < npet; i+=LS) {
 					if( i+LI >= npet ) break;
@@ -320,6 +339,7 @@ __kernel void my_test_kernel(
 				}		
 				if(rclash) clash=true; if(clash) goto DONE_CLASH_CHECK;
 			}			
+			barrier(CLK_LOCAL_MEM_FENCE);
 			if( dist2v(hyd_cen,pet_cen) < 4057.24684269 ) {
 				struct XFORM const xf = multxx(xhr,xp);
 				// xout[3*GI+2] = xf;
@@ -331,6 +351,7 @@ __kernel void my_test_kernel(
 			DONE_CLASH_CHECK: ;
 			if(rclash) clash=true;
 		}
+		barrier(CLK_LOCAL_MEM_FENCE);
 		
 		if( clash ) { // undo move if not accepted 
 			struct XFORM undo = xrev(move);
@@ -339,7 +360,7 @@ __kernel void my_test_kernel(
 			ONLY1 if(p_or_h) xp = multxx(undo,xp); else xh = multxx(undo,xh);			
 			ONLY1 status += ( (status > 0) ? 1 : 0 ); // add a fail to status if sampling
 		} else ONLY1 { // ACCEPT!
-			last_score = score;
+			last_score = score_bind;
 			vout[2*GI+0] = hyd_et;
 			vout[2*GI+1] = pet_et;
 			status = ( (status > 0) ? 1 : status-1 ); // if sampling, reset to 1, else sub 1
@@ -372,6 +393,7 @@ __kernel void my_test_kernel(
 				}//        9,19,23,11,24,12
 			}
 		}
+		barrier(CLK_LOCAL_MEM_FENCE);
 		
 		ONLY1 { // stats 
 			if(status>0) {
@@ -380,13 +402,16 @@ __kernel void my_test_kernel(
 			}
 	    	ONLY1 stat[nstat*GI+0] += (samp_delay<0) ? 1 : 0;
 		}
+		barrier(CLK_LOCAL_MEM_FENCE);
 
 	}		
 	
 	// OUTPUT
-//	barrier(CLK_LOCAL_MEM_FENCE);
+	barrier(CLK_LOCAL_MEM_FENCE);
 	for(size_t i=0; i<nlkh; i+=LS) if((i+LI)<nlkh) out[GI*ntot     +i+LI] = lkh[i+LI];
+	barrier(CLK_LOCAL_MEM_FENCE);
 	for(size_t i=0; i<nlkp; i+=LS) if((i+LI)<nlkp) out[GI*ntot+nlkh+i+LI] = lkp[i+LI];
+	barrier(CLK_LOCAL_MEM_FENCE);
 	ONLY1 xout[3*GI+0] = xh;
 	ONLY1 xout[3*GI+1] = xp;
 	

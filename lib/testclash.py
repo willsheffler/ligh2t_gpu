@@ -1,4 +1,4 @@
-import sys,os,pyopencl,pyopencl,numpy,pyopencl.array,random,time,clint,operator,re,clutil
+import sys,os,pyopencl,pyopencl,numpy,pyopencl.array,random,time,clint,operator,re,clutil,glob
 import matplotlib.pyplot as plt
 import gpu_mat_vec as gmv
 from xyzHash import xyzHash
@@ -6,7 +6,7 @@ from pdbutil import xform_pdb,dump_pdb
 from gpu_mat_vec import nparray_to_XFORMs
 from clint.textui import progress
 
-OPTS = "-I/Users/sheffler/project/protoprot/ligh2t/lib -cl-single-precision-constant -cl-mad-enable -cl-no-signed-zeros -cl-fast-relaxed-math -w"
+OPTS = "-I. -cl-single-precision-constant -cl-mad-enable -cl-no-signed-zeros -cl-fast-relaxed-math -w"
 
 #with open("nolinker.cl") as f: KERN = f.read()%vars()
 with open("testclash.cl") as f: KERN = f.read()%vars()
@@ -32,18 +32,35 @@ def get_stub(components,name):
 
 def test():
 	ctx,queue = clutil.my_get_gpu_context()
-	LS,GS = 64,24
-	NITER,NGPUITER = 1000,2000
+	LS,GS = 64,int(sys.argv[2])
+	NITER,NGPUITER = int(sys.argv[4]),int(sys.argv[3])
 	lh,lp = 27,27
+	NC = "n"
+	temperature = 15.0
 	nstat = 7
-	#for	lh in range(3,51,1):
-	#  for lp in (16,21,27):		
-	for temperature in (5,10,15,20,30,40,50,999999999):
-		# print lh,lp
-		print temperature
-		#temperature = 5.0
+	# allocate
+	ranlux = pyopencl.array.empty(queue, (112*GS,)   , dtype=numpy.   int8);      ranlux.fill(17)
+	out    = pyopencl.array.empty(queue, (3*3*(100)*GS,), dtype=numpy.float32);    out   .fill(0) 
+	xout   = pyopencl.array.empty(queue, (12*3*GS,)  , dtype=numpy.float32);      xout  .fill(0) 
+	rout   = pyopencl.array.empty(queue, (GS,)       , dtype=numpy.float32);      rout  .fill(0) 
+	vout   = pyopencl.array.empty(queue, (GS,6)      , dtype=numpy.float32);      vout  .fill(0) 
+	status = pyopencl.array.empty(queue, (GS,2)      , dtype=numpy.  int32);      status.fill(0) 
+	seed   = pyopencl.array.empty(queue, (1,)        , dtype=numpy. uint32);      seed  .fill(0) 
+	stat   = pyopencl.array.empty(queue, (GS,nstat)  , dtype=numpy.  int32);      stat  .fill(0) 
+	fstat  = pyopencl.array.empty(queue, (GS,nstat)  , dtype=numpy.float32);      fstat .fill(0) 
+	hist   = pyopencl.array.empty(queue, (300,)      , dtype=numpy. uint32);      hist  .fill(0) 
+	hist6  = pyopencl.array.empty(queue, (9,20,23,11,24,12), dtype=numpy.uint32); hist6.fill(0)  
+	#for temperature in (5,10,9999999999):
+	NC = 'c'
+	for lp in (10,20,30,40,50,):
+	  #for temperature in [2**x for x in range(6)]+[9e9]:
+	    for lh in (10,20,30,40,50):
+		NOUT = NITER*NGPUITER*GS
+                #if len(glob.glob("../test/hist6_bind_%i_%i_%s_%i_%i_*.dat"%(lh,lp,NC,temperature,NOUT))) > 3: continue
+	#for temperature in (15,):		
+		#print temperature
 		# inputs
-		components = "psi hyd pet lec ldn".split()
+		components = ("psi hyd pet ld%s len"%NC).split()
 		hyd_stub = get_stub(components,"hyd")
 		pet_stub = get_stub(components,"pet")
 		PSI_ET = "vec(52.126627, 53.095875, 23.992003)"
@@ -60,29 +77,27 @@ def test():
 		npsi,nhyd,npet = (data[i].size/3 for i in (0,2,4))
 		nlkh,nlkp = lh*3,lp*3
 		ntot = nlkh+nlkp #npsi+nhyd+npet+nlkh+nlkp
-		ranlux = pyopencl.array.empty(queue, (112*GS,)   , dtype=numpy.   int8); ranlux.fill(17)
-		out    = pyopencl.array.empty(queue, (3*ntot*GS+1,), dtype=numpy.float32); out   .fill(0)
-		xout   = pyopencl.array.empty(queue, (12*3*GS,)  , dtype=numpy.float32); xout  .fill(0)
-		rout   = pyopencl.array.empty(queue, (GS,)       , dtype=numpy.float32); rout  .fill(0)
-		vout   = pyopencl.array.empty(queue, (GS,6)      , dtype=numpy.float32); vout  .fill(0)
-		status = pyopencl.array.empty(queue, (GS,2)      , dtype=numpy.  int32); status.fill(0)
-		seed   = pyopencl.array.empty(queue, (1,)        , dtype=numpy. uint32); seed  .fill(0)
-		stat   = pyopencl.array.empty(queue, (GS,nstat)  , dtype=numpy.  int32); stat  .fill(0)
-		fstat  = pyopencl.array.empty(queue, (GS,nstat)  , dtype=numpy.float32); fstat .fill(0)
-		hist   = pyopencl.array.empty(queue, (300,)      , dtype=numpy. uint32); hist  .fill(0)
-		hist6  = pyopencl.array.empty(queue, (9,20,23,11,24,12), dtype=numpy.uint32); hist6.fill(0)
-
+		out   .fill(0) 
+		xout  .fill(0) 
+		rout  .fill(0) 
+		vout  .fill(0) 
+		status.fill(0) 
+		seed  .fill(0) 
+		stat  .fill(0) 
+		fstat .fill(0) 
+		hist  .fill(0) 
+		hist6.fill(0)  
 		kargs = [x.data for x in data+[ranlux,seed,out,xout,rout,vout,status,stat,fstat,hist,hist6] ]
 		my_test_kernel = pyopencl.Program(ctx,KERN%vars()).build(OPTS).my_test_kernel
 
 		#os.system("rm -f ../test/*.pdb")
 		seed.fill(random.getrandbits(31))
 		t = time.time()
-		for ITER in range(1,NITER+1): 
-			print ITER			
+		for ITER in range(1,NITER+1):
 			my_test_kernel(queue,(LS,GS),(LS,1), *kargs ).wait();			
+			#print lh,lp,NC,ITER,"COMPUTE RATE:",ITER*NGPUITER*GS/(time.time()-t)/1000.0
 		# for i in range(GS):
-		# 	if stat.get()[i,1] == 0: continue
+		# 	#if stat.get()[i,1] == 0: continue
 		# 	if not ITER in vars(): ITER = 0
 		# 	ary = out.get()			
 		# 	fn = "../test/test_%i_%i_%i.pdb"%(i,lh,lp)
@@ -91,41 +106,25 @@ def test():
 		# 	os.system("cat ../test/.tmp >> "+fn)			
 		# 	xform_pdb(nparray_to_XFORMs(xout.get())[3*i+0],"../pdb/hyda1_hash_bb.pdb","../test/.tmp")
 		# 	os.system("cat ../test/.tmp >> "+fn)
-		# 	xform_pdb(nparray_to_XFORMs(xout.get())[3*i+1],"../pdb/petf_hash_bb.pdb" ,"../test/.tmp")
+		# 	xform_pdb(nparray_to_XFORMs(xout.get())[3*i+1],"../pdb/PetF_hash_bb.pdb" ,"../test/.tmp")
 		# 	os.system("cat ../test/.tmp >> "+fn)
 		# 	# xform_pdb(nparray_to_XFORMs(xout.get())[3*i+2],"../pdb/petf_hash_bb.pdb" ,"../test/hyda_%i.pdb"%i)
 		# 	dump_pdb(vout.get()[i,],"../test/.tmp","X")
 		# 	os.system("cat ../test/.tmp >> "+fn)
 		# 	os.system("echo ENDMDL >> %s"%(fn))
-		NOUT = NITER*NGPUITER*GS
+		tag = str(random.random())
 		Ntrial = numpy.sum(stat.get()[:,0])
 		Nhist  = numpy.sum(stat.get()[:,2])
 		h = hist.get()#numpy.apply_along_axis(numpy.sum, 0, hist.get())		
-		#print "COMPUTE RATE:",NOUT/(time.time()-t)		
-		numpy.savetxt("../test/hist_%i_%i_%i_%i.dat"%(lh,lp,temperature,NOUT),h,"%i")
+		print "DONE",lp,NC,lh,temperature,"mcmc steps/sec:",int(NOUT/(time.time()-t))
+		#numpy.savetxt("../test/hist_%i_%i_%s_%i_%i_%s.dat"%(lh,lp,NC,temperature,NOUT,tag),h,"%i")
 		#print h[range(20)].reshape((2,10))
 		#print "samp frac: %f"%(float(Ntrial)/NOUT) , "sample loss:", float(Nhist-sum(h))/Nhist
-		# print
 		#print numpy.transpose(status.get())
-		#print stat
-		#print
-		h6 = hist6.get()
-		#print h6.shape
-		#print h6.ravel().shape
-		#print numpy.sum(h6.ravel()),Nhist,numpy.sum(h[range(16)])
-#		numpy.savetxt("../test/hist6_%i_%i_%i_%i.dat"%(lh,lp,temperature,NOUT),h6.ravel(),"%i")
-		w = numpy.where(h6>0)
-		#for i in range(w[0].shape[0]): print "h6[%i,%i,%i,%i,%i,%i]"%(w[5][i]+1,w[4][i]+1,w[3][i]+1,w[2][i]+1,w[1][i]+1,w[0][i]+1)
-		# h6 = hist6.get()
-		# print h6
-		# print min(h6[:, 0]),max(h6[:, 1])
-		# print min(h6[:, 2]),max(h6[:, 3])
-		# print min(h6[:, 4]),max(h6[:, 5])				
-		# print min(h6[:, 6]),max(h6[:, 7])				
-		# print min(h6[:, 8]),max(h6[:, 9])				
-		# print min(h6[:,10]),max(h6[:,11])				
-		# plt.semilogy(h)
-		# plt.show()
+		#print numpy.apply_along_axis(numpy.min,0,stat.get())
+		#print numpy.apply_along_axis(numpy.max,0,stat.get())		
+		#h6 = hist6.get()
+		#numpy.savetxt("../test/hist6_%i_%i_%s_%i_%i_%s.dat"%(lh,lp,NC,temperature,NOUT,tag),h6.ravel(),"%i")
 
 if __name__ == '__main__':
 	test()

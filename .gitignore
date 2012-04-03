@@ -5,3 +5,4 @@ test/*
 *.os
 *.dylib
 *.a
+._*
